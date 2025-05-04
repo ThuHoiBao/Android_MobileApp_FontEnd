@@ -1,0 +1,213 @@
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="5dp"
+    app:cardElevation="6dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="0dp">
+
+        <!-- Trạng thái giao hàng -->
+        <LinearLayout
+            android:id="@+id/orderStatusLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/order_status_background"
+            android:padding="10dp">
+
+            <!-- Icon giao hàng -->
+            <ImageView
+                android:id="@+id/orderStatusIcon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/delivery"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_gravity="top"/>
+
+            <!-- Layout dọc chứa 2 TextView -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <!-- Văn bản trạng thái giao hàng -->
+                <TextView
+                    android:id="@+id/orderStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="18 tháng 3 Đã giao"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#0A0B0A"
+                    android:layout_marginBottom="2dp"/>
+
+                <!-- Mô tả chi tiết trạng thái -->
+                <TextView
+                    android:id="@+id/orderStatusing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kiện hàng của bạn đã được giao..."
+                    android:textSize="16sp"
+                    android:textColor="#0A0B0A"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Ảnh sản phẩm bên trái và thông tin sản phẩm bên phải -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <!-- Ảnh sản phẩm bên trái -->
+            <ImageView
+                android:id="@+id/productImage"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="16dp"
+                android:scaleType="centerCrop"/>
+
+            <!-- Thông tin sản phẩm bên phải -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:layout_marginStart="16dp">
+
+                <!-- Tên sản phẩm -->
+                <TextView
+                    android:id="@+id/productName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Quần Trơn, Quần Baggy Nam Nữ"
+                    android:textSize="16sp"
+                    android:textColor="#212121"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:tooltipText="Quần Trơn, Quần Baggy Nam Nữ" />
+
+
+                <!-- Màu sắc và kích thước -->
+                <TextView
+                    android:id="@+id/productColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Màu đen, L, Đôi Vớ"
+                    android:textSize="14sp"
+                    android:textColor="#757575"
+                    android:layout_marginBottom="4dp"/>
+
+                <!-- Số lượng -->
+                <TextView
+                    android:id="@+id/productQuantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="x1"
+                    android:textSize="14sp"
+                    android:textColor="#757575"
+                    android:layout_marginBottom="4dp"/>
+
+                <!-- Giá sản phẩm -->
+                <TextView
+                    android:id="@+id/productPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="159.000đ"
+                    android:textSize="16sp"
+                    android:textColor="#ED0707"
+                    android:layout_marginBottom="4dp"/>
+
+                <!-- Tổng tiền -->
+                <TextView
+                    android:id="@+id/productTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tổng: 159.000đ"
+                    android:textSize="16sp"
+                    android:textColor="#212121"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="0dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/orderButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="0dp"
+            android:layout_marginStart="120dp"
+            android:layout_marginEnd="8dp"
+
+            android:layout_marginBottom="8dp"
+           >
+
+            <!-- Nút Mua lại -->
+            <TextView
+                android:id="@+id/reorderButton"
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:text="Mua lại"
+                android:textColor="#070707"
+                android:gravity="center"
+                android:background="@drawable/bg_button_reorder"
+                android:textSize="16sp"
+                android:layout_marginEnd="8dp"/>
+
+            <!-- Nút Viết đánh giá -->
+            <TextView
+                android:id="@+id/reviewButton"
+                android:layout_width="70dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:text="Viết đánh giá"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:background="@drawable/bg_button_review"
+                android:textSize="16sp"/>
+
+            <TextView
+                android:id="@+id/cancleOrderButton"
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button_reorder"
+                android:gravity="center"
+                android:text="Huỷ đơn"
+                android:textColor="#070707"
+                android:textSize="16sp" />
+            <TextView
+                android:id="@+id/viewFeedbackButton"
+                android:layout_width="40dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button_reorder"
+                android:gravity="center"
+                android:text="Xem đánh giá"
+                android:textColor="#070707"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Các nút điều hướng (nếu trạng thái là "Đã giao") -->
+
+
+    </androidx.cardview.widget.CardView>

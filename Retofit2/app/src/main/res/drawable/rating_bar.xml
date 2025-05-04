@@ -1,0 +1,8 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Nền sao rỗng -->
+    <item android:id="@android:id/background"
+        android:drawable="@drawable/add_start_empty" />
+    <!-- Sao được chọn đầy -->
+    <item android:id="@android:id/progress"
+        android:drawable="@drawable/add_start_noempty" />
+</layer-list>

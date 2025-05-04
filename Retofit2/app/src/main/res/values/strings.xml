@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Retofit2</string>
+    <string name="nav_home">Trang chủ</string>
+    <string name="nav_orders">Lịch sử</string>
+    <string name="nav_account">Tài khoản</string>
+</resources>

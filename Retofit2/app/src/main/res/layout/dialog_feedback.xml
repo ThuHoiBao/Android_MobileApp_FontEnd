@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Hình ảnh sản phẩm -->
+    <ImageView
+        android:id="@+id/feedbackProductImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/livechat" />
+
+    <!-- Tên sản phẩm -->
+    <TextView
+        android:id="@+id/feedbackProductName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Product Name"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingTop="8dp"
+        android:gravity="center_horizontal"/>
+
+    <!-- Rating -->
+    <RatingBar
+        android:id="@+id/feedbackRating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:rating="4"
+        android:progressTint="#FFEB3B"
+        android:layout_gravity="center_horizontal"
+        android:stepSize="1"/>
+
+    <!-- Comment -->
+    <TextView
+        android:id="@+id/feedbackComment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="This is a comment"
+        android:textSize="14sp"
+        android:paddingTop="8dp"
+        android:gravity="center_horizontal"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/feedbackImagesRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" />
+
+</LinearLayout>
