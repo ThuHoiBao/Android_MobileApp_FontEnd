@@ -3,26 +3,43 @@ package com.example.retofit2.api.retrofit;
 import com.example.retofit2.api.OrderItemAPI;
 import com.example.retofit2.api.ProductAPI;
 import com.example.retofit2.api.ReviewAPI;
+import com.example.retofit2.api.UserAPI;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class APIRetrofit {
 
-    private static final String BASE_URL = "http://192.168.1.195:8080/api/"; // Thay bằng URL thật của backend
+  //  private static final String BASE_URL = "http://192.168.1.195:8080/api/"; // Thay bằng URL thật của backend
+  public static final String BASE_URL = "http://10.0.2.2:8080/api/v1/users/"; // Thay bằng URL thật của backend
 
     private static Retrofit retrofit;
 
     public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addInterceptor(logging)
+                    .build();
+
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
+                    .client(client)
+                    .addConverterFactory(ScalarsConverterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create())  // Sử dụng Gson để parse JSON
                     .build();
         }
         return retrofit;
     }
 
+    public static UserAPI getUserApiService(){
+        return getRetrofitInstance().create(UserAPI.class);
+    }
     public static ProductAPI getApiService() {
         return getRetrofitInstance().create(ProductAPI.class);
     }
@@ -32,6 +49,4 @@ public class APIRetrofit {
     public static ReviewAPI getReviewAPIService() {
         return getRetrofitInstance().create(ReviewAPI.class);
     }
-
-
 }

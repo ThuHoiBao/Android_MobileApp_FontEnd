@@ -44,7 +44,7 @@ dependencies {
 
     // Load images with Glide
     implementation(libs.glide)
-    
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -56,5 +56,11 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.9.0")
 
     implementation("com.tbuonomo:dotsindicator:4.2")
-
+    implementation ("com.squareup.picasso:picasso:2.8")
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.10.0")
+    implementation ("com.google.android.gms:play-services-auth:21.3.0")
+    implementation ("com.auth0.android:jwtdecode:2.0.0")
+    implementation ("com.google.android.gms:play-services-auth:21.3.0")
+    implementation ("com.google.android.gms:play-services-safetynet:18.1.0")
 }

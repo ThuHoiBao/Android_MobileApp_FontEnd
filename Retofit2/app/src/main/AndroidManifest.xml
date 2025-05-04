@@ -22,16 +22,74 @@
         <activity
             android:name=".activity.CustomerHomeActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity
             android:name=".activity.OrderActivity"/>
         <activity
             android:name=".activity.FeedBackActivity"/>
+
+        <activity
+            android:name=".activity.Login"
+            android:exported="true" > <!-- Remove intent-filter from Product_Detail -->
+                        <intent-filter>
+                            <action android:name="android.intent.action.MAIN" />
+
+                            <category android:name="android.intent.category.LAUNCHER" />
+                        </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.ProductDetailActivity"
+            android:exported="false" /> <!-- Other activities -->
+
+        <activity
+            android:name=".activity.CartActivity"
+            android:exported="true">
+
+        </activity>
+        <activity
+            android:name=".activity.ForgetPassword"
+            android:exported="false" />
+        <activity
+            android:name=".activity.OTPVerification"
+            android:exported="false" />
+        <activity
+            android:name=".activity.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.UpdatePasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.UpdatePasswordSuccess"
+            android:exported="false" />
+        <activity
+            android:name=".activity.SignInSuccessful"
+            android:exported="false" />
+
+        <activity
+            android:name=".activity.PaymentActivity"
+            android:exported="true" > <!-- Remove intent-filter from Product_Detail -->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
+        <activity
+            android:name=".activity.AddressDeliveryActivity"
+            android:exported="true" >
+            <!-- Remove intent-filter from Product_Detail -->
+            <!--                        <intent-filter>-->
+            <!--                            <action android:name="android.intent.action.MAIN" />-->
+
+            <!--                            <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--                        </intent-filter>-->
+        </activity>
+
     </application>
 
 </manifest>

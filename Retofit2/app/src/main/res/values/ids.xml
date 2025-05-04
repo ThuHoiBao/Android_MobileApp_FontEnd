@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="cartIcon" type="id" />
+    <item name="google_btn" type="id" />
+    <item name="emailIcon" type="id" />
+</resources>
