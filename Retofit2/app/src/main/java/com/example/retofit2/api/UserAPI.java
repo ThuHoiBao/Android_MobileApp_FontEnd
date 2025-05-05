@@ -16,27 +16,27 @@ import retrofit2.http.PUT;
 import retrofit2.http.Query;
 
 public interface UserAPI {
-    @GET("verify-token")  // Đảm bảo endpoint này khớp với API của bạn
+    @GET("v1/users/verify-token")  // Đảm bảo endpoint này khớp với API của bạn
     Call<UserLoginDTO> verifyToken(@Header("Authorization") String token);
 
-    @GET("verify-email")
+    @GET("v1/users/verify-email")
     Call<String> verifyEmail(@Query("email") String email);
 
-    @GET("verify-phone")
+    @GET("v1/users/verify-phone")
     Call<String> verifyPhone(@Query("phone") String phone);
 
-    @POST("login")
+    @POST("v1/users/login")
     Call<TokenDTO> login(@Body UserLoginDTO userLoginDTO);
 
-    @POST("register")
+    @POST("v1/users/register")
     Call<UserDTO> register(@Body UserDTO userDTO);
 
-    @POST("send-otp")
+    @POST("v1/users/send-otp")
     Call<String> sendOtp(@Query("to") String to);
 
-    @PUT("update-password")
+    @PUT("v1/users/update-password")
     Call<String> updatePassword(@Body UserUpdatePw userUpdatePw);
 
-    @POST("login-social")
+    @POST("v1/users/login-social")
     Call<TokenDTO> loginWithGoogle(@Body UserDTO userDTO);
 }

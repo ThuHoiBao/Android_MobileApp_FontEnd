@@ -36,16 +36,21 @@
         <activity
             android:name=".activity.Login"
             android:exported="true" > <!-- Remove intent-filter from Product_Detail -->
-                        <intent-filter>
-                            <action android:name="android.intent.action.MAIN" />
+<!--                        <intent-filter>-->
+<!--                            <action android:name="android.intent.action.MAIN" />-->
 
-                            <category android:name="android.intent.category.LAUNCHER" />
-                        </intent-filter>
+<!--                            <category android:name="android.intent.category.LAUNCHER" />-->
+<!--                        </intent-filter>-->
         </activity>
         <activity
             android:name=".activity.ProductDetailActivity"
-            android:exported="false" /> <!-- Other activities -->
+            android:exported="true" > <!-- Remove intent-filter from Product_Detail -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activity.CartActivity"
             android:exported="true">
@@ -83,11 +88,11 @@
             android:name=".activity.AddressDeliveryActivity"
             android:exported="true" >
             <!-- Remove intent-filter from Product_Detail -->
-            <!--                        <intent-filter>-->
-            <!--                            <action android:name="android.intent.action.MAIN" />-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <!--                            <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--                        </intent-filter>-->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
     </application>

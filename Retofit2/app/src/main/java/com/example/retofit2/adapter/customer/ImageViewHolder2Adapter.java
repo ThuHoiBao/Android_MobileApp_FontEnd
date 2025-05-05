@@ -9,15 +9,18 @@ import android.widget.ImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.retofit2.R;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 
 public class ImageViewHolder2Adapter extends RecyclerView.Adapter<ImageViewHolder2Adapter.ImageViewHolder> {
     private Context context;
-    private Integer[] imageResources;
+    private List<String> imageUrls;
 
-    public ImageViewHolder2Adapter(Context context, Integer[] imageResources) {
+    public ImageViewHolder2Adapter(Context context,  List<String> imageUrls) {
         this.context = context;
-        this.imageResources = imageResources;
+        this.imageUrls = imageUrls;
     }
 
     @Override
@@ -29,13 +32,17 @@ public class ImageViewHolder2Adapter extends RecyclerView.Adapter<ImageViewHolde
 
     @Override
     public void onBindViewHolder(ImageViewHolder holder, int position) {
-        // Set image for each page in ViewPager2
-        holder.imageView.setImageResource(imageResources[position]);
+        String url = imageUrls.get(position);
+        Picasso.get()
+                .load(url)
+                .placeholder(R.drawable.iphone1) // hình tạm
+                .error(R.drawable.error_image)       // khi lỗi
+                .into(holder.imageView);
     }
 
     @Override
     public int getItemCount() {
-        return imageResources.length;
+        return imageUrls.size();
     }
 
     public static class ImageViewHolder extends RecyclerView.ViewHolder {
