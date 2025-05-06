@@ -75,7 +75,8 @@ public class AuthManager {
     private void onLoginSuccess(UserLoginDTO user){
         //Tiến hành lưu thông tin người dùng và chuyển đến màn hình chính của ứng dụng
         Intent intent = new Intent(context, ProductDetailActivity.class);
-        intent.putExtra("user_id", user.getPhone_number());
+//        intent.putExtra("user_id", user.getPhone_number());
+        Log.d("User Id", "Extracted User Id: " + SharedPrefManager.getUserId());
         context.startActivity(intent);
     }
 
