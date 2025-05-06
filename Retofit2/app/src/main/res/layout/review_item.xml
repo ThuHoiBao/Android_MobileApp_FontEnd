@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="12dp"
     android:layout_marginBottom="8dp"
@@ -26,15 +27,44 @@
     </LinearLayout>
 
     <!-- Nội dung đánh giá -->
-    <RatingBar
-        android:id="@+id/ratingBar"
+
+    <LinearLayout
+        android:id="@+id/ratingLayout"
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
-        android:numStars="5"
-        android:rating="4"
-        android:scaleX="0.7"
-        android:scaleY="0.7" />
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/star1"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/starfill" />
+
+        <ImageView
+            android:id="@+id/star2"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/starfill" />
+
+        <ImageView
+            android:id="@+id/star3"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/starfill" />
+
+        <ImageView
+            android:id="@+id/star4"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/starfill" />
+
+        <ImageView
+            android:id="@+id/star5"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/starnonfill" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/reviewContentTextView"

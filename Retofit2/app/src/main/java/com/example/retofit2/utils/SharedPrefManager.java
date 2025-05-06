@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class SharedPrefManager {
-    private SharedPreferences sharedPreferences;
+    private static SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
 
 
@@ -41,7 +41,9 @@ public class SharedPrefManager {
     public String getPhoneNumber(){
         return sharedPreferences.getString("PHONE_NUMBER", null);
     }
-
+    public static Long getUserId(){
+        return sharedPreferences.getLong("USER_ID", 0);
+    }
 
     public boolean hasToken(){
         return sharedPreferences.contains("JWT_TOKEN");
