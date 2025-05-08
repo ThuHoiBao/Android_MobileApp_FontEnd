@@ -1,25 +1,47 @@
 package com.example.retofit2.dto.requestDTO;
 
 public class CardItemDTO {
-
-    private String name;
-
+    private int cartItemId;
+    private String productName;
+    private String color;
     private double price;
     private int quantity;
-    private String imageUrl;
+    private String productImage;
+    private boolean isSelected = false;
+    private boolean outOfStockItems;
 
-    public CardItemDTO(String name, double price, int quantity) {
-        this.name = name;
+    public CardItemDTO(int cartItemId,String productName, String color, double price, int quantity, String productImage, boolean outOfStockItems) {
+        this.cartItemId = cartItemId;
+        this.productName = productName;
+        this.color = color;
         this.price = price;
         this.quantity = quantity;
+        this.productImage = productImage;
+        this.outOfStockItems = outOfStockItems;
     }
 
-    public String getName() {
-        return name;
+    public int getCartItemId() {
+        return cartItemId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCartItemId(int cartItemId) {
+        this.cartItemId = cartItemId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public double getPrice() {
@@ -37,12 +59,28 @@ public class CardItemDTO {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-    public String getImageUrl() {
-        return imageUrl;
+
+    public String getProductImage() {
+        return productImage;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setProductImage(String productImage) {
+        this.productImage = productImage;
     }
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    public boolean isOutOfStockItems() {
+        return outOfStockItems;
+    }
+
+    public void setOutOfStockItems(boolean outOfStockItems) {
+        this.outOfStockItems = outOfStockItems;
+    }
 }

@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,11 +23,15 @@ import com.example.retofit2.Toast.CustomToast;
 import com.example.retofit2.adapter.customer.ImageAdapter;
 import com.example.retofit2.adapter.customer.ImageViewHolder2Adapter;
 import com.example.retofit2.adapter.customer.ReviewAdapter;
+import com.example.retofit2.api.ICartAPI;
 import com.example.retofit2.api.ProductAPI;
 import com.example.retofit2.api.retrofit.APIRetrofit;
+import com.example.retofit2.dto.requestDTO.AddProductToCartRequestDTO;
 import com.example.retofit2.dto.requestDTO.ProductSummaryDTO;
 import com.example.retofit2.dto.requestDTO.ProductVariantDTO;
-import com.example.retofit2.dto.requestDTO.Review;
+import com.example.retofit2.dto.requestDTO.ReviewDTO;
+import com.example.retofit2.dto.responseDTO.ResponseObject;
+import com.example.retofit2.utils.SharedPrefManager;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.squareup.picasso.Picasso;
 
@@ -43,7 +48,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private ImageButton prevButton, nextButton;
     private RecyclerView reviewRecyclerView;
     private ReviewAdapter reviewAdapter;
-    private List<Review> reviewList;
+    private List<ReviewDTO> reviewList;
     private ImageAdapter adapter;
     private ProductSummaryDTO productSummaryDTO;
 
@@ -53,7 +58,8 @@ public class ProductDetailActivity extends AppCompatActivity {
     private View bottomSheetView;
     private List<ProductVariantDTO> productVariants = new ArrayList<>(); // ✅
     private int stockColorItem;
-    private String produc_name;
+    private String produc_name = "iPhone 16 Pro Max 256GB";
+    private ProductVariantDTO selectedVariant = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,17 +118,17 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         /* Danh sách đánh giá */
         reviewRecyclerView = findViewById(R.id.reviewRecyclerView);
-        List<String> reviewImages = new ArrayList<>();
-        reviewImages.add("https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-14-plus_1_.png");
-        reviewImages.add("https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-plus-256gb_2.png");
-
-        reviewList = new ArrayList<>();
-        reviewList.add(new Review("q*****1", 4, "Đúng hàng chính hãng Apple! Nguyên seal! Nguyên tem màu!", "2 ngày trước", reviewImages));
-        reviewList.add(new Review("t*****2", 5, "Mua rất hài lòng! Sản phẩm đẹp và xịn.", "1 tuần trước", reviewImages));
-
-        reviewAdapter = new ReviewAdapter(reviewList);
-        reviewRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        reviewRecyclerView.setAdapter(reviewAdapter);
+//        List<String> reviewImages = new ArrayList<>();
+//        reviewImages.add("https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-14-plus_1_.png");
+//        reviewImages.add("https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-plus-256gb_2.png");
+//
+//        reviewList = new ArrayList<>();
+//        reviewList.add(new ReviewDTO("q*****1", 4, "Đúng hàng chính hãng Apple! Nguyên seal! Nguyên tem màu!", "2 ngày trước", reviewImages));
+//        reviewList.add(new ReviewDTO("t*****2", 5, "Mua rất hài lòng! Sản phẩm đẹp và xịn.", "1 tuần trước", reviewImages));
+//
+//        reviewAdapter = new ReviewAdapter(reviewList);
+//        reviewRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        reviewRecyclerView.setAdapter(reviewAdapter);
 
         /* Add to Cart */
         ImageView cartIcon = findViewById(R.id.cartIcon);
@@ -137,6 +143,30 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         // Gọi API lấy thông tin sản phẩm
         callAPIProductDetail();
+        callAPIReviewProductName("iPhone 16 Pro Max 256GB");
+    }
+
+    private void callAPIReviewProductName(String produc_name) {
+        APIRetrofit.getReviewAPIService().getReviewsByProductName(produc_name).enqueue(new Callback<List<ReviewDTO>>() {
+            @Override
+            public void onResponse(Call<List<ReviewDTO>> call, Response<List<ReviewDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    reviewList = response.body();
+                    Log.d("reviewList", "Extracted User Id: " + reviewList);
+
+                    reviewAdapter = new ReviewAdapter(reviewList);
+                    reviewRecyclerView.setLayoutManager(new LinearLayoutManager(ProductDetailActivity.this));
+                    reviewRecyclerView.setAdapter(reviewAdapter);
+                } else {
+                    Log.d("reviewList", "Extracted User Id: " + reviewList);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ReviewDTO>> call, Throwable t) {
+                Toast.makeText(ProductDetailActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void updatePrice(int position) {
@@ -146,10 +176,9 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
     }
 
-
     private void callAPIProductDetail() {
         ProductAPI productAPI = APIRetrofit.getRetrofitInstance().create(ProductAPI.class);
-        Call<ProductSummaryDTO> call = productAPI.getProductSummary("iPhone 16 Pro Max 256GB");
+        Call<ProductSummaryDTO> call = productAPI.getProductSummary(produc_name);
 
         // In ra URL đang gọi
         Log.d("API_URL", call.request().url().toString());
@@ -169,7 +198,6 @@ public class ProductDetailActivity extends AppCompatActivity {
             }
         });
     }
-
 
     private void updateProductInfo() {
         if (productSummaryDTO != null) {
@@ -200,10 +228,10 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
     }
 
-
     private void loadProductData(View bottomSheetView) {
         if (productSummaryDTO != null) {
             // Cập nhật giá sản phẩm
+            Button orderButton = bottomSheetView.findViewById(R.id.addToCartButton);
             TextView priceText = bottomSheetView.findViewById(R.id.priceText);
             double productPrice = productSummaryDTO.getVariants().get(0).getPrice(); // Lấy giá từ variant đầu tiên
             priceText.setText("₫" + String.format("%,.0f", productPrice));
@@ -254,13 +282,17 @@ public class ProductDetailActivity extends AppCompatActivity {
                         }
                         v.setSelected(true);  // Đánh dấu màu sắc đã chọn
 
-                        ProductVariantDTO selectedVariant = productSummaryDTO.getVariants().get(variantIndex);
+                        ProductVariantDTO selectedVariantDTO  = productSummaryDTO.getVariants().get(variantIndex);
                         //Cap nhat hinh anh
-                        Picasso.get().load(selectedVariant.getImageUrl()).placeholder(R.drawable.iphone1).error(R.drawable.error_image).into(productImage);
+                        Picasso.get().load(selectedVariantDTO.getImageUrl()).placeholder(R.drawable.iphone1).error(R.drawable.error_image).into(productImage);
                         //Cap nhat gia
-                        priceText.setText("₫" + String.format("%,.0f", selectedVariant.getPrice()));
-                        stockText.setText("Kho: " + selectedVariant.getStock());
-                        stockColorItem = selectedVariant.getStock();
+                        priceText.setText("₫" + String.format("%,.0f", selectedVariantDTO.getPrice()));
+                        stockText.setText("Kho: " + selectedVariantDTO.getStock());
+                        stockColorItem = selectedVariantDTO.getStock();
+
+                        // Lưu variant đã chọn
+                        selectedVariant = selectedVariantDTO;
+                        Log.d("CartAdapter", "Clicked on item: " + selectedVariant.getColor());
                     });
                 } else {
                     // Variant hết hàng, vô hiệu hoá
@@ -275,6 +307,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
             ImageButton minusBtn = bottomSheetView.findViewById(R.id.minusButton);
             ImageButton plusBtn = bottomSheetView.findViewById(R.id.plusButton);
+            Button addToCart = bottomSheetView.findViewById(R.id.addToCartButton);
 
             final int[] quantity = {1};
             final int[] currentStock = {productSummaryDTO.getVariants().get(0).getStock()}; // Bắt đầu với variant đầu tiên
@@ -308,6 +341,75 @@ public class ProductDetailActivity extends AppCompatActivity {
                             v1 -> {
                                 // handle click if needed
                             }).show();
+                }
+            });
+
+            orderButton.setOnClickListener(v -> {
+                if(selectedVariant == null){
+                    CustomToast.makeText(this,
+                            "Vui lòng chọn phân loại hàng!",
+                            CustomToast.LONG,
+                            CustomToast.WARNING,
+                            true,
+                            Gravity.TOP, 350, 100,
+                            v1 -> {
+                                // Xử lý khi người dùng click vào Toast nếu cần
+                            }).show();
+                } else {
+                    //Đã chọn sản phẩm, gọi API để thêm vào giỏ hàng
+                    AddProductToCartRequestDTO requestDTO = new AddProductToCartRequestDTO();
+                    requestDTO.setProduct_name(produc_name);
+                    requestDTO.setColor(selectedVariant.getColor());
+                    requestDTO.setQuantity(Integer.parseInt(quantityText.getText().toString()));
+
+                    long userId = SharedPrefManager.getUserId();
+                    String token = SharedPrefManager.getToken();
+
+                    ICartAPI apiService = APIRetrofit.getCartAPIService(token);
+
+                    // Gọi API thêm sản phẩm vào giỏ hàng
+                    apiService.addProductToCart(requestDTO, userId).enqueue(new Callback<ResponseObject>() {
+                        @Override
+                        public void onResponse(Call<ResponseObject> call, Response<ResponseObject> response) {
+                            if (response.isSuccessful()) {
+                                // API thành công, hiển thị thông báo hoặc chuyển trang
+                                CustomToast.makeText(ProductDetailActivity.this,
+                                        "Sản phẩm đã được thêm vào giỏ hàng thành công!",
+                                        CustomToast.LONG,
+                                        CustomToast.SUCCESS,
+                                        true,
+                                        Gravity.TOP, 350, 100,
+                                        v1 -> {
+                                            // Handle click if needed
+                                        }).show();
+                            } else {
+                                // API thất bại, thông báo lỗi
+                                CustomToast.makeText(ProductDetailActivity.this,
+                                        "Có lỗi khi thêm sản phẩm vào giỏ hàng!",
+                                        CustomToast.LONG,
+                                        CustomToast.ERROR,
+                                        true,
+                                        Gravity.TOP, 350, 100,
+                                        v1 -> {
+                                            // Handle click if needed
+                                        }).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseObject> call, Throwable t) {
+                            // Lỗi khi gọi API
+                            CustomToast.makeText(ProductDetailActivity.this,
+                                    "Lỗi kết nối, vui lòng thử lại!",
+                                    CustomToast.LONG,
+                                    CustomToast.ERROR,
+                                    true,
+                                    Gravity.TOP, 350, 100,
+                                    v1 -> {
+                                        // Handle click if needed
+                                    }).show();
+                        }
+                    });
                 }
             });
         }

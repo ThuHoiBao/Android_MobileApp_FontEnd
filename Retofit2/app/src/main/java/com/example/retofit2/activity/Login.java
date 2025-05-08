@@ -54,6 +54,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
     ImageView googleBtn;
     CheckBox selectRemember;
     GoogleApiClient googleApiClient;
+    LoadingDialog loadingDialog = new LoadingDialog(Login.this);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,7 +79,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
         final TextView signUpBtn = findViewById(R.id.signUpBtn);
         final TextView fgPassWordBtn = findViewById(R.id.forgotPassword);
         loginBtn = findViewById(R.id.signInBtn);
-        LoadingDialog loadingDialog = new LoadingDialog(Login.this);
+
 
         selectRemember = findViewById(R.id.selectRemember);
 
@@ -117,13 +118,13 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
                 }
                 UserLoginDTO userLoginDTO = new UserLoginDTO(phoneNumber, password);
                 loadingDialog.startLoadingDialog();
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadingDialog.dismissDialog();
-                    }
-                }, 2000);
+//                Handler handler = new Handler();
+//                handler.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        loadingDialog.dismissDialog();
+//                    }
+//                }, 2000);
                 callLoginApi(userLoginDTO);
             }
         });
@@ -192,8 +193,10 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
             public void onResponse(Call<TokenDTO> call, Response<TokenDTO> response) {
 
                 if(response.isSuccessful()){
+                    loadingDialog.dismissDialog();
                     TokenDTO tokenDTO = response.body();
                     String token = tokenDTO.getToken();
+                    Log.d("Token", "Extracted Token: " + token);
                     Long userId = extractUserId(token);
                     Log.d("User Id", "Extracted User Id: " + userId);
                     if(selectRemember.isChecked()){
@@ -206,7 +209,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
                     }
 
                     //Navigative to MainActivity
-                    Intent intent = new Intent(Login.this, ProductDetailActivity.class);
+                    Intent intent = new Intent(Login.this, PaymentActivity.class);
                     CustomToast.makeText(Login.this, "Login successfully!", CustomToast.LONG, CustomToast.SUCCESS, true, Gravity.TOP,350, 100, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -216,12 +219,14 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
                     startActivity(intent);
                     finish(); // Finish Login to prevent going back
                 } else {
+                    loadingDialog.dismissDialog();
                     Toast.makeText(Login.this, "Invalid login credentials", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<TokenDTO> call, Throwable t) {
+                loadingDialog.dismissDialog();
                 Toast.makeText(Login.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

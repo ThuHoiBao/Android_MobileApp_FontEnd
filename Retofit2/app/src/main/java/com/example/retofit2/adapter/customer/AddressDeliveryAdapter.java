@@ -1,5 +1,6 @@
 package com.example.retofit2.adapter.customer;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,19 +11,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import com.example.retofit2.R;
-import com.example.retofit2.dto.requestDTO.AddressDelivery;
+import com.example.retofit2.activity.AddressDeliveryActivity;
+import com.example.retofit2.dto.responseDTO.AddressDeliveryDTO;
 
 import java.util.List;
 
 public class AddressDeliveryAdapter extends RecyclerView.Adapter<AddressDeliveryAdapter.AddressViewHolder> {
-    private List<AddressDelivery> addressList;
-    private int selectedPosition = -1;
+    private List<AddressDeliveryDTO> addressList;
+    private int selectedPosition = -1;  // To track the selected address
+    private AddressDeliveryActivity activity;
 
-    public AddressDeliveryAdapter(List<AddressDelivery> addressList) {
+    public AddressDeliveryAdapter(List<AddressDeliveryDTO> addressList, AddressDeliveryActivity activity) {
         this.addressList = addressList;
+        this.activity = activity;
         for (int i = 0; i < addressList.size(); i++) {
+            // Find the default address and set it as selected
             if (addressList.get(i).isDefault()) {
                 selectedPosition = i;
                 break;
@@ -39,29 +43,43 @@ public class AddressDeliveryAdapter extends RecyclerView.Adapter<AddressDelivery
 
     @Override
     public void onBindViewHolder(@NonNull AddressViewHolder holder, int position) {
-        AddressDelivery address = addressList.get(position);
+        AddressDeliveryDTO address = addressList.get(position);
 
-        holder.addressName.setText(address.getName());
-        holder.addPhone.setText(address.getPhone());
-        holder.addressDetails.setText(address.getDetails());
+        // Set the address information
+        holder.addressName.setText(address.getFullName());
+        holder.addPhone.setText(address.getPhoneNumber());
+        Log.d("phone", "Extracted Address Id: " + address.getPhoneNumber());
+        holder.addressDetails.setText(address.getAddress());
 
-        // Kiểm tra xem địa chỉ hiện tại có phải là mặc định không
-        holder.selectAddressRadioButton.setChecked(position == selectedPosition); // Chỉ đánh dấu nếu đây là địa chỉ được chọn
+        // Handle the selected radio button
+        holder.selectAddressRadioButton.setChecked(position == selectedPosition);
 
-        // Hiển thị label "Mặc định" nếu địa chỉ là mặc định
+        // Show label "Default" if it's the default address
         if (position == selectedPosition) {
-            holder.defaultLabel.setVisibility(View.VISIBLE); // Hiển thị label
+            holder.defaultLabel.setVisibility(View.VISIBLE); // Show label
         } else {
-            holder.defaultLabel.setVisibility(View.GONE); // Ẩn label nếu không phải mặc định
+            holder.defaultLabel.setVisibility(View.GONE); // Hide label if not default
         }
 
-        // Xử lý click trên radio button
+        // Handle click event on the radio button
         holder.selectAddressRadioButton.setOnClickListener(v -> {
-            selectedPosition = holder.getAdapterPosition(); // Cập nhật địa chỉ mặc định
-            notifyDataSetChanged(); // Cập nhật lại RecyclerView
+            // Update selected position
+            selectedPosition = holder.getAdapterPosition();
+
+            // Call API to update the address as default
+            if (activity != null) {
+                activity.updateDefaultAddress(address.getUserId(), address.getId());  // Call API to update the address
+            }
+
+            // Notify RecyclerView to refresh the list
+            notifyDataSetChanged();
         });
 
-
+        // Optionally handle clicks on the edit icon
+        holder.editAddressIcon.setOnClickListener(v -> {
+            // Handle address edit
+            // You can open an edit address activity or dialog here
+        });
     }
 
     @Override

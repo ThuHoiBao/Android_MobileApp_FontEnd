@@ -1,7 +1,12 @@
 package com.example.retofit2.activity;
 
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,27 +16,100 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.retofit2.R;
 import com.example.retofit2.adapter.customer.AddressDeliveryAdapter;
-import com.example.retofit2.dto.requestDTO.AddressDelivery;
+import com.example.retofit2.api.IAddressDelivery;
+import com.example.retofit2.api.retrofit.APIRetrofit;
+import com.example.retofit2.dto.responseDTO.AddressDeliveryDTO;
+import com.example.retofit2.utils.SharedPrefManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class AddressDeliveryActivity extends AppCompatActivity {
     private RecyclerView addressRecycleView;
     private AddressDeliveryAdapter addressDeliveryAdapter;
-    private List<AddressDelivery> addressDeliveryList;
+    private List<AddressDeliveryDTO> addressDeliveryDTOList;
+    private ImageButton backIcon;
+
+    private final long userId = SharedPrefManager.getUserId();
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.address_delivery_layout);
         addressRecycleView = findViewById(R.id.addressRecyclerView);
+        Button addNewAddress = findViewById(R.id.addNewAddressButton);
+        backIcon = findViewById(R.id.backIcon);
         addressRecycleView.setLayoutManager(new LinearLayoutManager(this));
 
-        addressDeliveryList = new ArrayList<>();
-        addressDeliveryList.add(new AddressDelivery("Vương Đức Thoại", "0859716818" ,"Kí Túc Xá D2 spkt, 484a Đường Lê Văn Việt, Phường Tăng Nhơn Phú A, TP. Hồ Chí Minh", true));
-        addressDeliveryList.add(new AddressDelivery("Vương Đức Thoại", "0859716818", "Mỹ Lệ Tây, Trụ Sở Khu Phố Mỹ Lệ Tây, Thị trấn Phú Thứ, Huyện Tây Hòa, Phú Yên", false));
-        addressDeliveryAdapter = new AddressDeliveryAdapter(addressDeliveryList);
-        addressRecycleView.setAdapter(addressDeliveryAdapter);
+        addressDeliveryDTOList = new ArrayList<>();
+        getAllAddressDelivery(userId);
+
+        addNewAddress.setOnClickListener(v -> {
+            Intent intent = new Intent(AddressDeliveryActivity.this, AddAddressDeliveryActivity.class);
+            startActivity(intent);
+            finish();
+
+        });
+
+        backIcon.setOnClickListener(v -> {
+            Intent intent = new Intent(AddressDeliveryActivity.this, PaymentActivity.class);
+            startActivity(intent);
+            finish();
+        });
+    }
+
+    private void getAllAddressDelivery(long userId) {
+        IAddressDelivery apiService = APIRetrofit.getRetrofitInstance().create(IAddressDelivery.class);
+        Call<List<AddressDeliveryDTO>> call = apiService.getAllAddressByUserId(userId);
+        call.enqueue(new Callback<List<AddressDeliveryDTO>>() {
+            @Override
+            public void onResponse(Call<List<AddressDeliveryDTO>> call, Response<List<AddressDeliveryDTO>> response) {
+                if(response.isSuccessful() && response.body() != null){
+                    addressDeliveryDTOList = response.body();
+                    addressDeliveryAdapter = new AddressDeliveryAdapter(addressDeliveryDTOList, AddressDeliveryActivity.this);
+                    addressRecycleView.setAdapter(addressDeliveryAdapter);
+                } else {
+                    Toast.makeText(AddressDeliveryActivity.this, "Failed to fetch data.", Toast.LENGTH_SHORT).show();
+                    Log.e("AddressDeliveryActivity", "API Error: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<AddressDeliveryDTO>> call, Throwable t) {
+                Toast.makeText(AddressDeliveryActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e("AddressDeliveryActivity", "API Call Failure: " + t.getMessage());
+            }
+        });
+    }
+
+    public void updateDefaultAddress(long userId, long addressId) {
+        // Call API to update the address as default
+        IAddressDelivery apiService = APIRetrofit.getRetrofitInstance().create(IAddressDelivery.class);
+        Call<String> call = apiService.setDefaultAddress(userId, addressId);
+
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    // Handle success
+                    Toast.makeText(AddressDeliveryActivity.this, "Address updated successfully: " + response.body(), Toast.LENGTH_SHORT).show();
+                } else {
+                    // Handle error
+                    Toast.makeText(AddressDeliveryActivity.this, "Failed to update address", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                // Handle failure
+                Log.e("AddressDeliveryActivity", "Error updating address: " + t.getMessage());
+                Toast.makeText(AddressDeliveryActivity.this, "Error updating address", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

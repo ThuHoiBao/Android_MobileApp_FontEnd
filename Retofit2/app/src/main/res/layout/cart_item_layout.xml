@@ -47,6 +47,15 @@
                 android:textColor="#000000" />
 
             <TextView
+                android:id="@+id/productColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Color"
+                android:textSize="14sp"
+                android:textStyle="normal"
+                android:textColor="#000000" />
+
+            <TextView
                 android:id="@+id/productPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,6 +64,8 @@
                 android:textStyle="bold"
                 android:textSize="17dp"
                 android:textColor="#000000" />
+
+
         </LinearLayout>
 
         <LinearLayout
@@ -91,12 +102,14 @@
                     android:adjustViewBounds="true"
                     android:background="@android:color/transparent" />
 
-                <TextView
+                <EditText
                     android:id="@+id/quantity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="1"
+                    android:maxLength="2"
                     android:textStyle="bold"
+                    android:inputType="number"
                     android:padding="8dp"
                     android:textSize="16sp"
                     android:textColor="#000000" />
@@ -110,7 +123,15 @@
                     android:adjustViewBounds="true"
                     android:background="@android:color/transparent" />
             </LinearLayout>
-
+            <TextView
+                android:id="@+id/message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="Hết hàng"
+                android:textStyle="normal"
+                android:textSize="17dp"
+                android:textColor="#F40D0D" />
         </LinearLayout>
 
     </LinearLayout>
