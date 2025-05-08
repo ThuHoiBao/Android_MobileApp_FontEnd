@@ -32,7 +32,7 @@ public class SharedPrefManager {
     }
 
     //Get token from SharedPreferences
-    public String getToken(){
+    public static String getToken(){
         return sharedPreferences.getString("JWT_TOKEN", null);
     }
 

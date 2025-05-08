@@ -59,7 +59,7 @@
 
 
     <EditText
-        android:id="@+id/nameEditText"
+        android:id="@+id/fullNameText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -79,7 +79,7 @@
         android:layout_marginBottom="8dp" />
 
     <EditText
-        android:id="@+id/phoneEditText"
+        android:id="@+id/phoneNumberText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Số điện thoại"
@@ -106,7 +106,7 @@
         android:layout_marginBottom="16dp">
 
         <EditText
-            android:id="@+id/cityEditText"
+            android:id="@+id/addressText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -119,7 +119,7 @@
     <!-- Tên đường, Tòa nhà, Số nhà -->
 
     <Button
-        android:id="@+id/addAddressPayment"
+        android:id="@+id/addNewAddressDelivery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="HOÀN THÀNH"

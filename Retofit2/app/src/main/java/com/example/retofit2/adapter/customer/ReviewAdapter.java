@@ -4,7 +4,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,15 +12,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.retofit2.R;
-import com.example.retofit2.dto.requestDTO.Review;
+import com.example.retofit2.dto.requestDTO.ReviewDTO;
 
 import java.util.List;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
 
-    private List<Review> reviewList; // danh sach review
+    private List<ReviewDTO> reviewList; // danh sach review
 
-    public ReviewAdapter(List<Review> reviewList) {
+    public ReviewAdapter(List<ReviewDTO> reviewList) {
         this.reviewList = reviewList;
     }
 
@@ -34,21 +33,21 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 
     @Override
     public void onBindViewHolder(@NonNull ReviewViewHolder holder, int position) {
-        Review review = reviewList.get(position);
+        ReviewDTO review = reviewList.get(position);
 
         // Set username, review content, review date
         holder.userNameTextView.setText(review.getUserName());
-        holder.reviewContentTextView.setText(review.getReviewContent());
+        holder.reviewContentTextView.setText(review.getComment());
         holder.reviewDateTextView.setText(review.getReviewDate());
 
         // Set up rating with ImageView stars
-        setRatingStars(holder, review.getRating());
+        setRatingStars(holder, review.getRatingValue());
 
         // Set up RecyclerView for images
         holder.reviewImagesRecyclerView.setLayoutManager(
                 new LinearLayoutManager(holder.reviewImagesRecyclerView.getContext(), LinearLayoutManager.HORIZONTAL, false)
         );
-        ReviewImagesAdapter imagesAdapter = new ReviewImagesAdapter(review.getReviewImages());
+        ReviewImagesAdapter imagesAdapter = new ReviewImagesAdapter(review.getImageReviews());
         holder.reviewImagesRecyclerView.setAdapter(imagesAdapter);
     }
 

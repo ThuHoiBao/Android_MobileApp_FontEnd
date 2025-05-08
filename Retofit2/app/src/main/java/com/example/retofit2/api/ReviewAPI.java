@@ -1,7 +1,7 @@
 package com.example.retofit2.api;
 
+import com.example.retofit2.dto.requestDTO.ReviewDTO;
 import com.example.retofit2.dto.requestDTO.ReviewRequestDTO;
-import com.example.retofit2.dto.responseDTO.ReviewResponseDTO;
 
 import java.util.List;
 
@@ -14,6 +14,7 @@ import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ReviewAPI {
 
@@ -30,5 +31,6 @@ public interface ReviewAPI {
     @GET("review/{orderItemId}")
     Call<ReviewRequestDTO> getReviewByOrderItemId(@Path("orderItemId") int orderItemId);
 
-
+    @GET("review/productName")
+    Call<List<ReviewDTO>> getReviewsByProductName(@Query("productName") String productName);
 }

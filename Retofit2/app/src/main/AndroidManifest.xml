@@ -96,9 +96,17 @@
 <!--            </intent-filter>-->
         </activity>
 
+        <activity
+            android:name=".activity.AddAddressDeliveryActivity"
+            android:exported="false" />
+
         <meta-data
             android:name="com.hedgehog.ratingbar.RatingBar"
             android:value="true" />
+
+
     </application>
+
+
 
 </manifest>
