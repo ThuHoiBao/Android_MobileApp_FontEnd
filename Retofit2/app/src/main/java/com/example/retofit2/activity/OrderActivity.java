@@ -62,7 +62,11 @@ public class OrderActivity extends AppCompatActivity {
         // Khởi tạo RecyclerView
         orderRecyclerView = findViewById(R.id.orderProductRecyclerView);
         // Tạo dữ liệu giả
-        getAllOrderItem(2);
+       Long userId = getIntent().getLongExtra("userId", -1);
+       // int userId=1;
+        int userIdInt = userId.intValue();
+
+        getAllOrderItem(1);
         // Gán adapter cho RecyclerView
         addTooltipToTextViews();
 
@@ -103,11 +107,11 @@ public class OrderActivity extends AppCompatActivity {
 
         statusAdapter.setOnStatusClickListener(statusName -> {
             if ("Tất cả đơn".equals(statusName)) {
-                getAllOrderItem(2); // lấy tất cả đơn
+                getAllOrderItem(1); // lấy tất cả đơn
             } else {
                 // Mapping tên tiếng Việt -> statusCode bên API nếu cần
                 String apiStatus = convertStatusToAPIFormat(statusName);
-                getOrderStatusItem(2, apiStatus);
+                getOrderStatusItem(1, apiStatus);
             }
         });
 

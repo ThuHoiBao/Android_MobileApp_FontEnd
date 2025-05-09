@@ -205,8 +205,9 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
                         }
                     }
 
-                    //Navigative to MainActivity
-                    Intent intent = new Intent(Login.this, ProductDetailActivity.class);
+                    Intent intent = new Intent(Login.this, CustomerHomeActivity.class);
+                    intent.putExtra("userId", userId);
+                    startActivity(intent);
                     CustomToast.makeText(Login.this, "Login successfully!", CustomToast.LONG, CustomToast.SUCCESS, true, Gravity.TOP,350, 100, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

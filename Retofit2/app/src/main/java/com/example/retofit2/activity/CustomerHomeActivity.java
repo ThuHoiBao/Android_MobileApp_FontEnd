@@ -81,6 +81,7 @@ public class CustomerHomeActivity extends AppCompatActivity implements HomeCatag
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.adminNav);
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
+        Long userId = getIntent().getLongExtra("userId", -1);
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -92,6 +93,7 @@ public class CustomerHomeActivity extends AppCompatActivity implements HomeCatag
                 // Tạm thời comment 2 chức năng này
                 else if (id == R.id.nav_orders) {
                     Intent intent = new Intent(CustomerHomeActivity.this, OrderActivity.class);
+                    intent.putExtra("userId", userId); // userId có thể là String hoặc int, tùy bạn
                     startActivity(intent);
                     return true;
 
