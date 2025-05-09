@@ -1,8 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Nền sao rỗng -->
-    <item android:id="@android:id/background"
-        android:drawable="@drawable/add_start_empty" />
-    <!-- Sao được chọn đầy -->
-    <item android:id="@android:id/progress"
-        android:drawable="@drawable/add_start_noempty" />
+    <!-- Màu cho các sao chưa được chọn -->
+    <item android:right="2dp">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <solid android:color="#D3D3D3"/> <!-- Màu xám -->
+            <size android:width="30dp" android:height="30dp"/>
+        </shape>
+    </item>
+    <!-- Màu cho các sao đã được chọn -->
+    <item>
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <solid android:color="#FFEB3B"/> <!-- Màu vàng -->
+            <size android:width="30dp" android:height="30dp"/>
+        </shape>
+    </item>
 </layer-list>

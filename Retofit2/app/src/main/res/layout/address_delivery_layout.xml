@@ -43,16 +43,32 @@
     <!-- RecyclerView hiển thị danh sách địa chỉ -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/addressRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_width="410dp"
+        android:layout_height="574dp" />
 
-    <!-- Nút thêm địa chỉ mới -->
-    <Button
-        android:id="@+id/addNewAddressButton"
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="#CCCCCC" />
+    <!-- Nút xác nhận mới -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Thêm Địa Chỉ Mới"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="#FF5722"
-        android:textColor="@android:color/white"/>
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:weightSum="2">
+
+        <Button
+            android:id="@+id/addNewAddressButton"
+            android:layout_width="64dp"
+            android:layout_height="66dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:backgroundTint="#FF5722"
+            android:text="Thêm Địa Chỉ Mới"
+            android:textColor="@android:color/white" />
 </LinearLayout>
+
+    </LinearLayout>

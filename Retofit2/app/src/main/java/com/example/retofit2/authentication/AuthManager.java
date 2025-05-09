@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.util.Log;
 
 
-import com.example.retofit2.activity.CustomerHomeActivity;
 import com.example.retofit2.activity.Login;
 import com.example.retofit2.activity.ProductDetailActivity;
 import com.example.retofit2.api.UserAPI;
@@ -75,7 +74,7 @@ public class AuthManager {
 
     private void onLoginSuccess(UserLoginDTO user){
         //Tiến hành lưu thông tin người dùng và chuyển đến màn hình chính của ứng dụng
-        Intent intent = new Intent(context, CustomerHomeActivity.class);
+        Intent intent = new Intent(context, ProductDetailActivity.class);
         intent.putExtra("user_id", user.getPhone_number());
         context.startActivity(intent);
     }

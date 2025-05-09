@@ -1,9 +1,12 @@
 package com.example.retofit2.api.retrofit;
 
+import com.example.retofit2.api.IAddressDelivery;
+import com.example.retofit2.api.ICartAPI;
 import com.example.retofit2.api.OrderItemAPI;
 import com.example.retofit2.api.ProductAPI;
 import com.example.retofit2.api.ReviewAPI;
 import com.example.retofit2.api.UserAPI;
+import com.example.retofit2.authentication.AuthInterceptor;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -37,6 +40,22 @@ public class APIRetrofit {
         return retrofit;
     }
 
+    //Ham nay duoc su dung de goi các API can Bearer Token
+    public static Retrofit getInstance(String token) {
+        if (retrofit == null) {
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .addInterceptor(new AuthInterceptor(token))
+                    .build();
+
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+        return retrofit;
+    }
+
     public static UserAPI getUserApiService(){
         return getRetrofitInstance().create(UserAPI.class);
     }
@@ -49,4 +68,13 @@ public class APIRetrofit {
     public static ReviewAPI getReviewAPIService() {
         return getRetrofitInstance().create(ReviewAPI.class);
     }
+
+    public static ICartAPI getCartAPIService(String token) {
+        return getRetrofitInstance().create(ICartAPI.class);
+    }
+
+    public static IAddressDelivery getAddressDelivery(){
+        return getRetrofitInstance().create(IAddressDelivery.class);
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.example.retofit2.dto.requestDTO;
 
 public class ProductVariantDTO {
+
     private String color;
     private double price;
     private String imageUrl;

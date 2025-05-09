@@ -35,7 +35,7 @@ public class ProductPaymentAdapter extends RecyclerView.Adapter<ProductPaymentAd
 //        Picasso.get()
 //                .load(cardItemDTO.getImageUrl()) // Lấy URL từ CardItemDTO
 //                .into(holder.productImage);
-        holder.productName.setText(cardItemDTO.getName());
+        holder.productName.setText(cardItemDTO.getProductName());
         holder.productPrice.setText("₫" + cardItemDTO.getPrice());
         holder.productQuantity.setText("x" + cardItemDTO.getQuantity());
     }
