@@ -6,10 +6,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
-
-
     <application
-
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -80,9 +77,10 @@
             android:name=".activity.PaymentActivity"
             android:exported="true" > <!-- Remove intent-filter from Product_Detail -->
 <!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--                <action android:name="android.intent.action.VIEW" />-->
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--                <category android:name="android.intent.category.BROWSABLE" />-->
+<!--                <data android:scheme="vnpay" android:host="callback" />-->
 <!--            </intent-filter>-->
         </activity>
         <activity
@@ -100,13 +98,21 @@
             android:name=".activity.AddAddressDeliveryActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".activity.PaymentCallbackActivity"
+            android:exported="false" />
+
+        <activity android:name=".activity.PaymentWebViewActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="myapp" android:host="vnpay_callback" />
+            </intent-filter>
+        </activity>
         <meta-data
             android:name="com.hedgehog.ratingbar.RatingBar"
             android:value="true" />
-
-
     </application>
-
-
-
 </manifest>

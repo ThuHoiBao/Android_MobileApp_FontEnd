@@ -149,7 +149,6 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
                 .addConnectionCallbacks(Login.this)
                 .build();
         googleApiClient.connect();
-
     }
 
     private void signIn(){
@@ -160,6 +159,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("LoginActivity", "onActivityResult called with requestCode: " + requestCode + ", resultCode: " + resultCode);
         if(requestCode == 1000){
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
@@ -168,6 +168,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
                     sendLoginSocialRequest(account);
                 }
             } catch (ApiException e) {
+                Log.e("LoginActivity", "Google Sign-In failed with code: " + e.getStatusCode(), e);
                 CustomToast.makeText(Login.this, "Something went wrong!", CustomToast.LONG, CustomToast.ERROR, true, Gravity.TOP,350, 100, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -209,7 +210,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
                     }
 
                     //Navigative to MainActivity
-                    Intent intent = new Intent(Login.this, PaymentActivity.class);
+                    Intent intent = new Intent(Login.this, CartActivity.class);
                     CustomToast.makeText(Login.this, "Login successfully!", CustomToast.LONG, CustomToast.SUCCESS, true, Gravity.TOP,350, 100, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -282,6 +283,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
                     SharedPrefManager prefManager = new SharedPrefManager(Login.this);
                     prefManager.saveToken(token);
                     prefManager.saveUserId(userId);
+                    Log.d("Token", token);
                     Log.d("User Id", "Extracted User Id: " + userId);
                     CustomToast.makeText(Login.this, "Google login successful!", CustomToast.LONG, CustomToast.SUCCESS, true, Gravity.TOP,350, 100, null).show();
                     navigateToSecondActivity();

@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,11 +17,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.retofit2.R;
 import com.example.retofit2.adapter.customer.ProductPaymentAdapter;
 import com.example.retofit2.api.IAddressDelivery;
+import com.example.retofit2.api.IOrderAPI;
+import com.example.retofit2.api.VNPayAPI;
 import com.example.retofit2.api.retrofit.APIRetrofit;
+import com.example.retofit2.dto.requestDTO.CreateOrderRequestDTO;
+import com.example.retofit2.dto.requestDTO.PaymentRequestDTO;
 import com.example.retofit2.dto.responseDTO.AddressDeliveryDTO;
 import com.example.retofit2.dto.requestDTO.CardItemDTO;
+import com.example.retofit2.dto.responseDTO.OrderResponseDTO;
+import com.example.retofit2.utils.OrderCallback;
 import com.example.retofit2.utils.SharedPrefManager;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,20 +39,20 @@ import retrofit2.Response;
 public class PaymentActivity extends AppCompatActivity {
     private RecyclerView productsRecycleView;
     private ProductPaymentAdapter productPaymentAdapter;
-    private List<CardItemDTO> productList;
+
+    private List<CardItemDTO> selectedItems;
     final long userId = SharedPrefManager.getUserId();
     private TextView fullNameText, phoneNumberText, addressText;
     private TextView totalAmountText, discountAmountText;
+    private long totalAmount;
 
     private ImageButton backIcon, nextButton;
-
+    private Button placeOrderButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment);
-
-
         productsRecycleView = findViewById(R.id.productRecyclerView);
         backIcon = findViewById(R.id.backIcon);
         fullNameText = findViewById(R.id.nameText);
@@ -52,11 +60,20 @@ public class PaymentActivity extends AppCompatActivity {
         addressText = findViewById(R.id.addressText);
         nextButton = findViewById(R.id.nextButton);
         productsRecycleView.setLayoutManager(new LinearLayoutManager(this));
+        placeOrderButton = findViewById(R.id.placeOrderButton);
+        totalAmountText = findViewById(R.id.totalAmountText);
 
         // Lấy danh sách sản phẩm mẫu
-        productList = getProductList(); // Lấy danh sách sản phẩm
-        productPaymentAdapter = new ProductPaymentAdapter(productList);
-        productsRecycleView.setAdapter(productPaymentAdapter);
+        Intent intent1 = getIntent();
+        selectedItems = intent1.getParcelableArrayListExtra("selectedItems");
+        Log.e("PaymentActivity", selectedItems.get(0).getCartItemId() + "");
+        if (selectedItems != null) {
+            productPaymentAdapter = new ProductPaymentAdapter(selectedItems);
+            productsRecycleView.setAdapter(productPaymentAdapter);
+            updateTotalAmount();
+        } else {
+            Log.e("PaymentActivity", "No items selected");
+        }
 
         backIcon.setOnClickListener(v -> {
             Intent intent = new Intent(PaymentActivity.this, CartActivity.class);
@@ -65,11 +82,79 @@ public class PaymentActivity extends AppCompatActivity {
         });
 
         //Lay thong tin thanh toans
-        getDefaultDeliveryAddress(userId);
         nextButton.setOnClickListener(v -> {
             Intent intent = new Intent(PaymentActivity.this, AddressDeliveryActivity.class);
+            intent.putParcelableArrayListExtra("selectedItems", new ArrayList<>(selectedItems));
             startActivity(intent);
             finish();
+        });
+
+        getDefaultDeliveryAddress(userId);
+
+        placeOrderButton.setOnClickListener(v -> {
+            CreateOrderRequestDTO createOrderRequestDTO = new CreateOrderRequestDTO();
+            createOrderRequestDTO.setUserId(SharedPrefManager.getUserId());
+            List<Integer> list= new ArrayList<>();
+            for (int i = 0; i < selectedItems.size(); i++){
+                list.add(selectedItems.get(i).getCartItemId());
+            }
+            createOrderRequestDTO.setCartItemIds(list);
+            createOrder(createOrderRequestDTO, new OrderCallback() {
+                @Override
+                public void onSuccess(OrderResponseDTO orderResponseDTO) {
+                    PaymentRequestDTO paymentRequestDTO = new PaymentRequestDTO(orderResponseDTO.getOrderId(), totalAmount, "NCB", "vn");
+                    createPaymentUrl(paymentRequestDTO);
+                }
+
+                @Override
+                public void onError(Throwable t) {
+                    Toast.makeText(getApplicationContext(), "Lỗi khi tạo Order: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+
+        });
+    }
+
+    public void createOrder(CreateOrderRequestDTO requestDTO, OrderCallback callback) {
+        IOrderAPI orderAPI = APIRetrofit.getOrderApiService();
+        orderAPI.createOrderFromCart(requestDTO).enqueue(new Callback<OrderResponseDTO>() {
+            @Override
+            public void onResponse(Call<OrderResponseDTO> call, Response<OrderResponseDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    callback.onSuccess(response.body());
+                } else {
+                    callback.onError(new Exception("Lỗi khi tạo Order: " + response.message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<OrderResponseDTO> call, Throwable t) {
+                callback.onError(t);
+            }
+        });
+    }
+
+    private void createPaymentUrl(PaymentRequestDTO paymentRequestDTO) {
+        VNPayAPI vnPayAPI = APIRetrofit.getVNPAYApiService();
+        vnPayAPI.createPaymentUrl(paymentRequestDTO).enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if (response.isSuccessful()) {
+                    String paymentUrl = response.body();
+                    Log.d("PaymentActivity", "Payment URL: " + paymentUrl);
+
+                    Intent intent = new Intent(PaymentActivity.this, PaymentWebViewActivity.class);
+                    intent.putExtra("paymentUrl", paymentUrl);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Lỗi khi tạo URL thanh toán", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Lỗi khi tạo URL thanh toán", Toast.LENGTH_LONG).show();
+            }
         });
     }
 
@@ -101,26 +186,16 @@ public class PaymentActivity extends AppCompatActivity {
     }
 
 
+    private void updateTotalAmount() {
+        totalAmount = 0;
+        for (CardItemDTO item : selectedItems) {
+            if (!item.isOutOfStockItems()) { // Không cần kiểm tra isSelected() nếu đã lọc trước đó
+                totalAmount += item.getPrice() * item.getQuantity();
+            }
+        }
 
-
-
-    public List<CardItemDTO> getProductList() {
-        List<CardItemDTO> productList = new ArrayList<>();
-
-//        CardItemDTO cardItemDTO1 = new CardItemDTO("Đồng hồ nam Led LP22","Blue",
-//                23000,
-//                1);
-////        cardItemDTO1.setImageUrl("https://cdn.tgdd.vn/Products/Images/42/281570/iphone-15-hong-thumb-1-600x600.jpg");
-//
-//        CardItemDTO cardItemDTO2 = new CardItemDTO("Đồng hồ nam Led LP22","Blue",
-//                23000,
-//                1);
-//        cardItemDTO1.setImageUrl("https://cdn.tgdd.vn/Products/Images/42/281570/iphone-15-hong-thumb-1-600x600.jpg");
-
-//        productList.add(cardItemDTO1);
-//
-//
-//        productList.add(cardItemDTO2);
-        return productList;
+        DecimalFormat decimalFormat = new DecimalFormat("#,###");
+        String formattedPrice = decimalFormat.format(totalAmount);
+        totalAmountText.setText("Tổng tiền: " + formattedPrice + "đ");
     }
 }

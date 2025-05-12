@@ -16,8 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.retofit2.R;
 import com.example.retofit2.adapter.customer.AddressDeliveryAdapter;
+import com.example.retofit2.adapter.customer.ProductPaymentAdapter;
 import com.example.retofit2.api.IAddressDelivery;
 import com.example.retofit2.api.retrofit.APIRetrofit;
+import com.example.retofit2.dto.requestDTO.CardItemDTO;
 import com.example.retofit2.dto.responseDTO.AddressDeliveryDTO;
 import com.example.retofit2.utils.SharedPrefManager;
 
@@ -32,6 +34,7 @@ public class AddressDeliveryActivity extends AppCompatActivity {
     private RecyclerView addressRecycleView;
     private AddressDeliveryAdapter addressDeliveryAdapter;
     private List<AddressDeliveryDTO> addressDeliveryDTOList;
+    ArrayList<CardItemDTO> selectedItems;
     private ImageButton backIcon;
 
     private final long userId = SharedPrefManager.getUserId();
@@ -49,15 +52,20 @@ public class AddressDeliveryActivity extends AppCompatActivity {
         addressDeliveryDTOList = new ArrayList<>();
         getAllAddressDelivery(userId);
 
+        selectedItems = getIntent().getParcelableArrayListExtra("selectedItems"); // Lưu lại để dùng khi back
         addNewAddress.setOnClickListener(v -> {
             Intent intent = new Intent(AddressDeliveryActivity.this, AddAddressDeliveryActivity.class);
+            intent.putParcelableArrayListExtra("selectedItems", selectedItems);
             startActivity(intent);
             finish();
 
         });
 
+
         backIcon.setOnClickListener(v -> {
             Intent intent = new Intent(AddressDeliveryActivity.this, PaymentActivity.class);
+            // Lấy danh sách sản phẩm mẫu
+            intent.putParcelableArrayListExtra("selectedItems", selectedItems);
             startActivity(intent);
             finish();
         });

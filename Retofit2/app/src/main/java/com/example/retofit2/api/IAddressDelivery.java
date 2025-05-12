@@ -7,10 +7,12 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 
 public interface IAddressDelivery {
     @GET("address/default")
@@ -24,4 +26,7 @@ public interface IAddressDelivery {
 
     @POST("address/add")
     Call<AddressDeliveryDTO> createAddress(@Body AddressDeliveyRequestDTO dto);
+
+    @DELETE("address/delete")
+    Call<String> deleteAddress(@Query("addressId") long addressId, @Query("userId") long userId);
 }

@@ -14,8 +14,11 @@ import com.example.retofit2.R;
 import com.example.retofit2.api.IAddressDelivery;
 import com.example.retofit2.api.retrofit.APIRetrofit;
 import com.example.retofit2.dto.requestDTO.AddressDeliveyRequestDTO;
+import com.example.retofit2.dto.requestDTO.CardItemDTO;
 import com.example.retofit2.dto.responseDTO.AddressDeliveryDTO;
 import com.example.retofit2.utils.SharedPrefManager;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,6 +28,7 @@ public class AddAddressDeliveryActivity extends AppCompatActivity {
     private EditText fullNameEditText, phoneNumberEditText, addressEditText;
     private Button btnAddAddress;
     final long userId = SharedPrefManager.getUserId();
+    ArrayList<CardItemDTO> selectedItems;
     ImageButton backIcon;
 
     @Override
@@ -58,9 +62,10 @@ public class AddAddressDeliveryActivity extends AppCompatActivity {
             }
         });
 
-
+        selectedItems = getIntent().getParcelableArrayListExtra("selectedItems"); // Lưu lại để dùng khi back
         backIcon.setOnClickListener(v ->  {
             Intent intent = new Intent(AddAddressDeliveryActivity.this, AddressDeliveryActivity.class);
+            intent.putParcelableArrayListExtra("selectedItems", selectedItems);
             startActivity(intent);
             finish();
         });
@@ -86,6 +91,4 @@ public class AddAddressDeliveryActivity extends AppCompatActivity {
             }
         });
     }
-
-
 }

@@ -1,7 +1,6 @@
 package com.example.retofit2.activity;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.CheckBox;
@@ -63,7 +62,19 @@ public class CartActivity extends AppCompatActivity {
 
         shippingButton.setOnClickListener(v -> {
             // Handle shipping action
-            Toast.makeText(CartActivity.this, "Proceeding to Shipping", Toast.LENGTH_SHORT).show();
+            List<CardItemDTO> selectedItems = new ArrayList<>();
+            for(CardItemDTO item : cartItems){
+                if(item.isSelected() && !item.isOutOfStockItems()){
+                    selectedItems.add(item);
+                }
+            }
+            if(selectedItems.isEmpty()){
+                Toast.makeText(CartActivity.this, "Please select at least one item", Toast.LENGTH_SHORT).show();
+            } else {
+                Intent intent = new Intent(CartActivity.this, PaymentActivity.class);
+                intent.putParcelableArrayListExtra("selectedItems", new ArrayList<>(selectedItems));
+                startActivity(intent);
+            }
         });
 
         selectAllCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -83,7 +94,6 @@ public class CartActivity extends AppCompatActivity {
             if(!item.isOutOfStockItems()){
                 item.setSelected(isSelected);
             }
-
         }
         cartAdapter.notifyDataSetChanged();
         updateTotalAmount();
@@ -103,6 +113,7 @@ public class CartActivity extends AppCompatActivity {
                         item.setSelected(false);
                         cartItems.add(item);
                     }
+
                     cartAdapter.notifyDataSetChanged();
 
                     updateTotalAmount();

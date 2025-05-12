@@ -9,6 +9,7 @@ import com.example.retofit2.activity.AddressDeliveryActivity;
 import com.example.retofit2.activity.CartActivity;
 import com.example.retofit2.activity.CustomerHomeActivity;
 import com.example.retofit2.activity.Login;
+import com.example.retofit2.activity.PaymentActivity;
 import com.example.retofit2.activity.ProductDetailActivity;
 import com.example.retofit2.api.UserAPI;
 import com.example.retofit2.api.retrofit.APIRetrofit;
@@ -33,6 +34,7 @@ public class AuthManager {
         if(token != null){
             //Send token for backend to check valid
 //            promptUserForLogin();
+            Log.d("Token", token);
             sendTokenBackendForVerification(token);
         } else {
             //If no token, request user login
