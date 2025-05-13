@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.util.Log;
 
 
-import com.example.retofit2.activity.AddressDeliveryActivity;
-import com.example.retofit2.activity.CartActivity;
 import com.example.retofit2.activity.CustomerHomeActivity;
 import com.example.retofit2.activity.Login;
 import com.example.retofit2.activity.PaymentActivity;
@@ -79,9 +77,8 @@ public class AuthManager {
 
     private void onLoginSuccess(UserLoginDTO user){
         //Tiến hành lưu thông tin người dùng và chuyển đến màn hình chính của ứng dụng
-        Intent intent = new Intent(context, CartActivity.class);
-//        intent.putExtra("user_id", user.getPhone_number());
-        Log.d("User Id", "Extracted User Id: " + SharedPrefManager.getUserId());
+        Intent intent = new Intent(context, CustomerHomeActivity.class);
+       // intent.putExtra("user_id", user.getPhone_number());
         context.startActivity(intent);
     }
 

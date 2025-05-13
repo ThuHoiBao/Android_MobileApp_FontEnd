@@ -63,4 +63,10 @@ dependencies {
     implementation ("com.auth0.android:jwtdecode:2.0.0")
     implementation ("com.google.android.gms:play-services-auth:21.3.0")
     implementation ("com.google.android.gms:play-services-safetynet:18.1.0")
+
+    // Thư viện Glide để tải và hiển thị hình ảnh
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
+
+    implementation ("com.wdullaer:materialdatetimepicker:4.2.3")
+
 }

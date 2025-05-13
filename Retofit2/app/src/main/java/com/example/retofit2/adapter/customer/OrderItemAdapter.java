@@ -98,6 +98,7 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
             holder.reviewButton.setVisibility(View.VISIBLE);
             holder.orderCancle.setVisibility(View.GONE);
             holder.viewFeedback.setVisibility(View.GONE);
+            holder.btnPayment.setVisibility(View.GONE);
 
         }else if(order.getOrderStatus().equals("CONFIRMED")) {
             // Lấy LayoutParams hiện tại
@@ -116,6 +117,7 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
             holder.reviewButton.setVisibility(View.GONE);
             holder.orderCancle.setVisibility(View.VISIBLE);
             holder.viewFeedback.setVisibility(View.GONE);
+            holder.btnPayment.setVisibility(View.GONE);
 
             holder.orderCancle.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -141,12 +143,16 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
                             holder.reviewButton.setVisibility(View.GONE);
                             holder.orderCancle.setVisibility(View.GONE);
                             holder.viewFeedback.setVisibility(View.VISIBLE);
+                            holder.btnPayment.setVisibility(View.GONE);
+
                         } else {
                             // Nếu Review không tồn tại, hiển thị reviewButton
                             holder.reorderButton.setVisibility(View.VISIBLE);
                             holder.reviewButton.setVisibility(View.VISIBLE);
                             holder.orderCancle.setVisibility(View.GONE);
                             holder.viewFeedback.setVisibility(View.GONE);
+                            holder.btnPayment.setVisibility(View.GONE);
+
                         }
                     } else {
                         Toast.makeText(context, "Lỗi kiểm tra trạng thái đánh giá", Toast.LENGTH_SHORT).show();
@@ -173,12 +179,30 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
             holder.reviewButton.setVisibility(View.GONE);
             holder.orderCancle.setVisibility(View.GONE);
             holder.viewFeedback.setVisibility(View.GONE);
+            holder.btnPayment.setVisibility(View.GONE);
+
+        }
+        else if (order.getOrderStatus().equals("PENDING")) {
+
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.reorderButton.getLayoutParams();
+            int marginInDp = 130; // số dp bạn muốn
+            float scale = holder.btnPayment.getContext().getResources().getDisplayMetrics().density;
+            int marginInPx = (int) (marginInDp * scale + 0.5f);
+            params.setMarginStart(marginInPx);
+            holder.btnPayment.setLayoutParams(params);
+            holder.reorderButton.setVisibility(View.GONE);
+            holder.reviewButton.setVisibility(View.GONE);
+            holder.orderCancle.setVisibility(View.GONE);
+            holder.viewFeedback.setVisibility(View.GONE);
+            holder.btnPayment.setVisibility(View.VISIBLE);
         }
         else {
             holder.reorderButton.setVisibility(View.GONE);
             holder.reviewButton.setVisibility(View.GONE);
             holder.orderCancle.setVisibility(View.GONE);
             holder.viewFeedback.setVisibility(View.GONE);
+            holder.btnPayment.setVisibility(View.GONE);
+
         }
 
         // Set ảnh sản phẩm
@@ -235,8 +259,66 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
             }
         });
 
-    }
 
+        holder.linearLayout.setOnClickListener(v -> {
+            // Khi nhấn vào LinearLayout, mở Dialog chi tiết đơn hàng
+            showOrderDetailsDialog(order);
+
+        });
+
+        // Set ảnh sản phẩm
+        Glide.with(context)
+                .load(order.getImageUrl())
+                .into(holder.productImage);
+
+
+    }
+    AlertDialog dialog;
+    private void showOrderDetailsDialog(OrderItemRequestDTO order) {
+        // Tạo LayoutInflater để tạo view từ XML layout dialog
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View dialogView = inflater.inflate(R.layout.dialog_order_details, null);
+
+        // Lấy các TextView từ layout dialog để hiển thị dữ liệu
+        TextView orderIdText = dialogView.findViewById(R.id.orderIdText);
+        TextView productNameText = dialogView.findViewById(R.id.productNameText);
+        TextView productQuantityText = dialogView.findViewById(R.id.productQuantityText);
+        TextView productColorText = dialogView.findViewById(R.id.productColorText);
+        TextView productPriceText = dialogView.findViewById(R.id.productPriceText);
+        TextView customerNameText = dialogView.findViewById(R.id.customerNameText);
+        TextView customerAddressText = dialogView.findViewById(R.id.customerAddressText);
+        TextView customerPhoneText = dialogView.findViewById(R.id.customerPhoneText);
+        ImageView imageView =dialogView.findViewById(R.id.productImage);
+        // Cập nhật dữ liệu vào các TextView
+        orderIdText.setText(" "+ order.getOrderId());
+        productNameText.setText(" " + order.getProductName());
+        productQuantityText.setText(" x" + order.getQuantity());
+        productColorText.setText(" " + order.getColor());
+        productPriceText.setText(" " + order.getPrice() + "₫");
+        customerNameText.setText(" " + order.getFullName());
+        customerAddressText.setText("" + order.getAddress());
+        customerPhoneText.setText("" + order.getPhoneNumber());
+        Glide.with(context)
+                .load(order.getImageUrl())
+                .into(imageView);// Tạo AlertDialog để hiển thị
+
+        // Tạo AlertDialog để hiển thị
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setView(dialogView)
+                .setCancelable(true);
+        dialog = builder.create();
+        dialog.show();
+
+        // Thêm sự kiện nhấn nút "Đóng"
+        TextView btnCloseDialog = dialogView.findViewById(R.id.btnCloseDialog);
+        btnCloseDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Đóng dialog khi nhấn nút
+                dialog.dismiss();
+            }
+        });
+    }
     private void showFeedbackDialog(ReviewRequestDTO reviewRequestDTO, OrderItemRequestDTO order) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -275,8 +357,10 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
     public class OrderProductViewHolder extends RecyclerView.ViewHolder {
         TextView productName, productColor, productPrice, productTotal, orderStatus,orderStatusing,orderCancle,viewFeedback,productQuantity;
         ImageView productImage;
-        TextView reviewButton, reorderButton;
-        LinearLayout orderButtons;
+        TextView reviewButton, reorderButton , btnPayment;
+        LinearLayout orderButtons ;
+        // Khởi tạo LinearLayout
+        LinearLayout linearLayout;
 
         public OrderProductViewHolder(View itemView) {
             super(itemView);
@@ -293,6 +377,8 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
             orderCancle=itemView.findViewById(R.id.cancleOrderButton);
             viewFeedback=itemView.findViewById(R.id.viewFeedbackButton);
             productQuantity=itemView.findViewById(R.id.productQuantity);
+            btnPayment=itemView.findViewById(R.id.btnPayment);
+            linearLayout = itemView.findViewById(R.id.orderStatusLayout);
         }
     }
     private void showCancelDialog(int orderId) {

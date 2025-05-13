@@ -209,16 +209,14 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
                         }
                     }
 
-                    //Navigative to MainActivity
-                    Intent intent = new Intent(Login.this, CartActivity.class);
-                    CustomToast.makeText(Login.this, "Login successfully!", CustomToast.LONG, CustomToast.SUCCESS, true, Gravity.TOP,350, 100, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // Handle the click event here
-                        }
-                    }).show();
+
+
+                    Intent intent = new Intent(Login.this, CustomerHomeActivity.class);
+                    intent.putExtra("userId", userId);
+
                     startActivity(intent);
-                    finish(); // Finish Login to prevent going back
+
+
                 } else {
                     loadingDialog.dismissDialog();
                     Toast.makeText(Login.this, "Invalid login credentials", Toast.LENGTH_SHORT).show();

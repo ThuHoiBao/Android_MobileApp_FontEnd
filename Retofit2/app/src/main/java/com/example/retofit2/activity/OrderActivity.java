@@ -5,11 +5,14 @@ package com.example.retofit2.activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,11 +50,13 @@ public class OrderActivity extends AppCompatActivity {
     private List<Integer> bannerImages;
     private ViewPager2 bannerViewPager;
     private  BannerAdapter bannerAdapter;
-
+    AlertDialog dialog;
 
     private RecyclerView statusOrderRecyclerView;
     private OrderStatusAdapter statusAdapter;
     private List<OrderStatusRequestDTO> statusList;
+
+    private LinearLayout linearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +67,11 @@ public class OrderActivity extends AppCompatActivity {
         // Khởi tạo RecyclerView
         orderRecyclerView = findViewById(R.id.orderProductRecyclerView);
         // Tạo dữ liệu giả
-        getAllOrderItem(2);
+       Long userId = getIntent().getLongExtra("userId", -1);
+       // int userId=1;
+        int userIdInt = userId.intValue();
+
+        getAllOrderItem(userIdInt);
         // Gán adapter cho RecyclerView
         addTooltipToTextViews();
 
@@ -103,16 +112,23 @@ public class OrderActivity extends AppCompatActivity {
 
         statusAdapter.setOnStatusClickListener(statusName -> {
             if ("Tất cả đơn".equals(statusName)) {
-                getAllOrderItem(2); // lấy tất cả đơn
+                getAllOrderItem(userIdInt); // lấy tất cả đơn
             } else {
                 // Mapping tên tiếng Việt -> statusCode bên API nếu cần
                 String apiStatus = convertStatusToAPIFormat(statusName);
-                getOrderStatusItem(2, apiStatus);
+                getOrderStatusItem(userIdInt, apiStatus);
             }
         });
 
+        // Khởi tạo LinearLayout
+
+
 
     }
+
+    // Phương thức để đóng Dialog
+
+
     private void getAllOrderItem(int customerId) {
         APIRetrofit.getOrderItemAPIService().getAllOrderItem(customerId).enqueue(new Callback<List<OrderItemRequestDTO>>() {
             @Override
@@ -166,6 +182,8 @@ public class OrderActivity extends AppCompatActivity {
                 return "CANCELLED";
             case "Đã đánh giá":
                 return "FEEDBACKED";
+            case "Chưa thanh toán":
+                return "PENDING";
             default:
                 return "";
         }
@@ -196,7 +214,11 @@ public class OrderActivity extends AppCompatActivity {
 
         OrderStatusRequestDTO status5 = new OrderStatusRequestDTO();
         status5.setNameOrderStatus("Đã đánh giá");
-        status5.setImageOrderStatus("feedback"); // drawable/delivered.png// drawable/delivered.png
+        status5.setImageOrderStatus("feedback");
+
+        OrderStatusRequestDTO status6 = new OrderStatusRequestDTO();
+        status6.setNameOrderStatus("Chưa thanh toán");
+        status6.setImageOrderStatus("box"); // drawable/delivered.png// drawable/delivered.png// drawable/delivered.png// drawable/delivered.png
 
         list.add(status0);
         list.add(status1);
@@ -204,6 +226,7 @@ public class OrderActivity extends AppCompatActivity {
         list.add(status3);
         list.add(status4);
         list.add(status5);
+        list.add(status6);
         return list;
     }
 

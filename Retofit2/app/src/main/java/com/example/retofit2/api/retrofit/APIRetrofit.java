@@ -19,7 +19,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class APIRetrofit {
 
   //  private static final String BASE_URL = "http://192.168.1.195:8080/api/"; // Thay bằng URL thật của backend
-  public static final String BASE_URL = "http://10.0.2.2:8080/api/"; // Thay bằng URL thật của backend
+  public static final String BASE_URL = "http://192.168.1.4:8080/api/"; // Thay bằng URL thật của backend
 
     private static Retrofit retrofit;
 
