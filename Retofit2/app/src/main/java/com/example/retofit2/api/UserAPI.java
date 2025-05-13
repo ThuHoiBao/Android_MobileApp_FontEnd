@@ -5,14 +5,23 @@ package com.example.retofit2.api;
 import com.example.retofit2.dto.requestDTO.TokenDTO;
 import com.example.retofit2.dto.requestDTO.UserDTO;
 import com.example.retofit2.dto.requestDTO.UserLoginDTO;
+import com.example.retofit2.dto.requestDTO.UserRequestDTO;
 import com.example.retofit2.dto.requestDTO.UserUpdatePw;
 
+import java.util.List;
+
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface UserAPI {
@@ -39,4 +48,14 @@ public interface UserAPI {
 
     @POST("v1/users/login-social")
     Call<TokenDTO> loginWithGoogle(@Body UserDTO userDTO);
+
+    @GET("v1/users/profile/{userId}")
+    Call <UserRequestDTO> getUserProfile (@Path("userId") int userId);
+
+    @Multipart
+    @POST("v1/users/profile/update")
+    Call<ResponseBody> updateProfileUser(
+            @Part("user") RequestBody userJson,
+            @Part MultipartBody.Part imgProfile
+    );
 }

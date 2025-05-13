@@ -27,6 +27,7 @@ import com.example.retofit2.api.retrofit.CategoryRetrofit;
 import com.example.retofit2.api.retrofit.APIRetrofit;
 import com.example.retofit2.dto.requestDTO.CategoryRequestDTO;
 import com.example.retofit2.dto.requestDTO.ProductRequestDTO;
+import com.example.retofit2.utils.SharedPrefManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator;
 
@@ -81,7 +82,8 @@ public class CustomerHomeActivity extends AppCompatActivity implements HomeCatag
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.adminNav);
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
-        Long userId = getIntent().getLongExtra("userId", -1);
+     //   Long userId = getIntent().getLongExtra("userId", -1);
+        Long userId= SharedPrefManager.getUserId();
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -98,10 +100,16 @@ public class CustomerHomeActivity extends AppCompatActivity implements HomeCatag
                     return true;
 
                 } else if (id == R.id.nav_home) {
-                    // startActivity(new Intent(AdminHomeActivity.this, AdminAccountActivity.class));
-                    //tvAdminName.setText("Chức năng Tài khoản đang cập nhật...");
+
                     return true;
                 }
+                else if (id == R.id.nav_account) {
+                    Intent intent = new Intent(CustomerHomeActivity.this, ProfileActivity.class);
+                    intent.putExtra("userId", userId); // userId có thể là String hoặc int, tùy bạn
+                    startActivity(intent);
+                return true;
+            }
+
                 return false;
             }
 
