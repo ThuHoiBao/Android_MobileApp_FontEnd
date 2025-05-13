@@ -203,6 +203,16 @@
                 android:text="Xem đánh giá"
                 android:textColor="#070707"
                 android:textSize="16sp" />
+            <TextView
+                android:id="@+id/btnPayment"
+                android:layout_width="70dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:text="Thanh toán"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:background="@drawable/bg_button_review"
+                android:textSize="16sp"/>
         </LinearLayout>
 
     </LinearLayout>
