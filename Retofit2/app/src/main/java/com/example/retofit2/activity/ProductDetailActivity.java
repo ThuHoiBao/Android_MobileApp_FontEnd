@@ -58,7 +58,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private View bottomSheetView;
     private List<ProductVariantDTO> productVariants = new ArrayList<>(); // ✅
     private int stockColorItem;
-    private String produc_name = "iPhone 16 Pro Max 256GB";
+    private String product_name = "iPhone 16 Pro Max 256GB";
     private ProductVariantDTO selectedVariant = null;
 
     @Override
@@ -178,7 +178,7 @@ public class ProductDetailActivity extends AppCompatActivity {
 
     private void callAPIProductDetail() {
         ProductAPI productAPI = APIRetrofit.getRetrofitInstance().create(ProductAPI.class);
-        Call<ProductSummaryDTO> call = productAPI.getProductSummary(produc_name);
+        Call<ProductSummaryDTO> call = productAPI.getProductSummary(product_name);
 
         // In ra URL đang gọi
         Log.d("API_URL", call.request().url().toString());
@@ -358,7 +358,7 @@ public class ProductDetailActivity extends AppCompatActivity {
                 } else {
                     //Đã chọn sản phẩm, gọi API để thêm vào giỏ hàng
                     AddProductToCartRequestDTO requestDTO = new AddProductToCartRequestDTO();
-                    requestDTO.setProduct_name(produc_name);
+                    requestDTO.setProduct_name(product_name);
                     requestDTO.setColor(selectedVariant.getColor());
                     requestDTO.setQuantity(Integer.parseInt(quantityText.getText().toString()));
 

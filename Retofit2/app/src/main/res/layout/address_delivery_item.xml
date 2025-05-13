@@ -33,7 +33,7 @@
                 android:id="@+id/addressName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Vương Đức Thoại"
+                android:text="Ho va Ten"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginEnd="8dp"/>
@@ -50,7 +50,7 @@
                 android:id="@+id/phoneNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="(+84) 859 716 818"
+                android:text="So Dien Thoai"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginStart="8dp"
@@ -61,7 +61,7 @@
             android:id="@+id/addressDetails"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Kí Túc Xá D2 spkt, 484a Đường Lê Văn Việt, Phường Tăng Nhơn Phú A, TP. Hồ Chí Minh"
+            android:text="Dia chi giao hang..."
             android:textSize="14sp"
             android:textColor="#666666"/>
 
@@ -77,9 +77,9 @@
 
     <!-- Icon sửa địa chỉ -->
     <ImageView
-        android:id="@+id/editAddressIcon"
+        android:id="@+id/deleteIcon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/edit"
+        android:src="@drawable/junk"
         android:layout_gravity="center_vertical"/>
 </LinearLayout>

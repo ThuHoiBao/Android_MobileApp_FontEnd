@@ -24,6 +24,7 @@ import com.example.retofit2.api.ICartAPI;
 import com.example.retofit2.api.retrofit.APIRetrofit;
 import com.example.retofit2.dto.requestDTO.CardItemDTO;
 import com.example.retofit2.dto.requestDTO.CartItemUpdateRequestDTO;
+import com.example.retofit2.dto.responseDTO.CartItemUpdateResultDTO;
 import com.example.retofit2.dto.responseDTO.ResponseObject;
 import com.example.retofit2.utils.SharedPrefManager;
 import com.squareup.picasso.Picasso;
@@ -50,7 +51,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
     private final Runnable updateRunnable = this::sendBatchUpdate;
     private final long DEBOUNCE_DELAY = 800;
     private final Map<String, CardItemDTO> modifiedItems = new HashMap<>();
-    long  userId = SharedPrefManager.getUserId();
     String token = SharedPrefManager.getToken();
     public CartAdapter(List<CardItemDTO> cartItems, RecyclerView recyclerView, TextView totalAmountText) {
         this.cartItems = cartItems;
@@ -100,14 +100,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             holder.increaseButton.setEnabled(false);
             holder.deleteButton.setEnabled(true);
             holder.quantity.setEnabled(false);
-            holder.message.setText("Hết hàng");
+            holder.message.setText(cardItemDTO.getMessage());
         } else {
             holder.checkBox.setEnabled(true);
             holder.itemView.setAlpha(1.0f);
             holder.increaseButton.setEnabled(true);
             holder.decreaseButton.setEnabled(true);
             holder.quantity.setEnabled(true);
-            holder.message.setText("");
+            holder.message.setText(cardItemDTO.getMessage());
         }
 
         // Nút tăng
@@ -198,7 +198,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     private void deleteCartItem(int cardItemId) {
         ICartAPI apiService = APIRetrofit.getCartAPIService(token);
-        apiService.removeCartItem(userId, cardItemId).enqueue(new Callback<String>() {
+        apiService.removeCartItem(cardItemId).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
@@ -232,18 +232,33 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
         List<CartItemUpdateRequestDTO> updates = new ArrayList<>();
         for (CardItemDTO item : modifiedItems.values()) {
-            updates.add(new CartItemUpdateRequestDTO(item.getProductName(), item.getColor(), item.getQuantity()));
+            updates.add(new CartItemUpdateRequestDTO(item.getCartItemId(),item.getProductName(), item.getColor(), item.getQuantity()));
         }
-
 
         ICartAPI apiService = APIRetrofit.getCartAPIService(token);
 
-        apiService.updateCartItems(userId, updates).enqueue(new Callback<ResponseObject>() {
+        apiService.updateCartItems(updates).enqueue(new Callback<List<CartItemUpdateResultDTO>>() {
             @Override
-            public void onResponse(Call<ResponseObject> call, Response<ResponseObject> response) {
+            public void onResponse(Call<List<CartItemUpdateResultDTO>> call, Response<List<CartItemUpdateResultDTO>> response) {
                 if (response.isSuccessful()) {
+                    List<CartItemUpdateResultDTO>  result = response.body();
                     updateTotalAmount();
                     Log.d("CartAdapter", "Batch update successful.");
+                    for (int i = 0; i < result.size(); i ++) {
+                        CartItemUpdateResultDTO itemResult = result.get(i);
+                        CardItemDTO item = cartItems.get(i);// Lấy item từ cartItems theo vị trí
+                        if (itemResult.isOutOfStock()) {
+                            item.setOutOfStockItems(true);
+//                            item.setQuantity(itemResult.getUpdatedQuantity());
+                            item.setMessage(itemResult.getMessage());
+                        } else {
+                            item.setOutOfStockItems(false);
+                            item.setQuantity(itemResult.getUpdatedQuantity());
+                            item.setMessage(itemResult.getMessage());
+                        }
+                        notifyItemChanged(i);
+                    }
+
                     modifiedItems.clear();
                 } else {
                     Log.e("CartAdapter", "Batch update failed.");
@@ -251,7 +266,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             }
 
             @Override
-            public void onFailure(Call<ResponseObject> call, Throwable t) {
+            public void onFailure(Call<List<CartItemUpdateResultDTO>> call, Throwable t) {
                 Log.e("CartAdapter", "Batch update error: " + t.getMessage());
             }
         });

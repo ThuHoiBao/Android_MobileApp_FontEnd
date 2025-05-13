@@ -2,10 +2,12 @@ package com.example.retofit2.api.retrofit;
 
 import com.example.retofit2.api.IAddressDelivery;
 import com.example.retofit2.api.ICartAPI;
+import com.example.retofit2.api.IOrderAPI;
 import com.example.retofit2.api.OrderItemAPI;
 import com.example.retofit2.api.ProductAPI;
 import com.example.retofit2.api.ReviewAPI;
 import com.example.retofit2.api.UserAPI;
+import com.example.retofit2.api.VNPayAPI;
 import com.example.retofit2.authentication.AuthInterceptor;
 
 import okhttp3.OkHttpClient;
@@ -75,6 +77,15 @@ public class APIRetrofit {
 
     public static IAddressDelivery getAddressDelivery(){
         return getRetrofitInstance().create(IAddressDelivery.class);
+    }
+
+
+    public static VNPayAPI getVNPAYApiService(){
+        return getRetrofitInstance().create(VNPayAPI.class);
+    }
+
+    public static IOrderAPI getOrderApiService(){
+        return getRetrofitInstance().create(IOrderAPI.class);
     }
 
 }
