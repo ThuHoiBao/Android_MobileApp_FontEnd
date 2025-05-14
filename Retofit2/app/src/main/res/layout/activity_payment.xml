@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
+    android:id="@+id/mainLayout"
     >
 
     <!-- First LinearLayout -->
@@ -146,12 +147,11 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/productRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="391dp"
+        android:layout_height="540dp"
         android:layout_marginBottom="16dp"
         android:orientation="vertical" />
-    <!-- Tổng cộng và tiết kiệm -->
 
-    <!-- Nút Đặt hàng -->
+    <!-- Tổng cộng và tiết kiệm -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -166,35 +166,25 @@
             android:orientation="vertical">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tổng cộng"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="14sp" />
-
-            <TextView
                 android:id="@+id/totalAmountText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="₫31.500"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
     </LinearLayout>
-
+    <!-- Nút Đặt hàng -->
     <Button
         android:id="@+id/placeOrderButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="63dp"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#FF5722"
         android:text="Đặt hàng"
         android:textColor="@android:color/white"
-        android:backgroundTint="#FF5722"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"/>
+        android:textStyle="bold" />
 </LinearLayout>

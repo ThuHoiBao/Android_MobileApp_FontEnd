@@ -13,9 +13,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.retofit2.R;
 import com.example.retofit2.activity.AddressDeliveryActivity;
+import com.example.retofit2.api.IAddressDelivery;
+import com.example.retofit2.api.retrofit.APIRetrofit;
 import com.example.retofit2.dto.responseDTO.AddressDeliveryDTO;
 
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AddressDeliveryAdapter extends RecyclerView.Adapter<AddressDeliveryAdapter.AddressViewHolder> {
     private List<AddressDeliveryDTO> addressList;
@@ -45,43 +51,64 @@ public class AddressDeliveryAdapter extends RecyclerView.Adapter<AddressDelivery
     public void onBindViewHolder(@NonNull AddressViewHolder holder, int position) {
         AddressDeliveryDTO address = addressList.get(position);
 
-        // Set the address information
+        // Set address info
         holder.addressName.setText(address.getFullName());
         holder.addPhone.setText(address.getPhoneNumber());
-        Log.d("phone", "Extracted Address Id: " + address.getPhoneNumber());
         holder.addressDetails.setText(address.getAddress());
 
-        // Handle the selected radio button
+        // Set radio button
         holder.selectAddressRadioButton.setChecked(position == selectedPosition);
+        holder.defaultLabel.setVisibility(position == selectedPosition ? View.VISIBLE : View.GONE);
 
-        // Show label "Default" if it's the default address
-        if (position == selectedPosition) {
-            holder.defaultLabel.setVisibility(View.VISIBLE); // Show label
-        } else {
-            holder.defaultLabel.setVisibility(View.GONE); // Hide label if not default
-        }
-
-        // Handle click event on the radio button
+        // Handle radio button click
         holder.selectAddressRadioButton.setOnClickListener(v -> {
-            // Update selected position
-            selectedPosition = holder.getAdapterPosition();
+            int currentPos = holder.getAdapterPosition();
+            if (currentPos == RecyclerView.NO_POSITION) return;
 
-            // Call API to update the address as default
+            selectedPosition = currentPos;
+
+            AddressDeliveryDTO selectedAddress = addressList.get(currentPos);
             if (activity != null) {
-                activity.updateDefaultAddress(address.getUserId(), address.getId());  // Call API to update the address
+                activity.updateDefaultAddress(selectedAddress.getUserId(), selectedAddress.getId());
             }
 
-            // Notify RecyclerView to refresh the list
             notifyDataSetChanged();
         });
 
-        // Optionally handle clicks on the edit icon
-        holder.editAddressIcon.setOnClickListener(v -> {
-            // Handle address edit
-            // You can open an edit address activity or dialog here
+        // Handle delete icon click
+        holder.deleteAddressIcon.setOnClickListener(v -> {
+            int currentPos = holder.getAdapterPosition();
+            if (currentPos == RecyclerView.NO_POSITION) return;
+
+            AddressDeliveryDTO toDelete = addressList.get(currentPos);
+
+            IAddressDelivery apiService = APIRetrofit.getAddressDelivery();
+            apiService.deleteAddress(toDelete.getId(), toDelete.getUserId()).enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response.isSuccessful()) {
+                        addressList.remove(currentPos);
+                        notifyItemRemoved(currentPos);
+
+                        if (selectedPosition == currentPos) {
+                            selectedPosition = -1;
+                        } else if (selectedPosition > currentPos) {
+                            selectedPosition--;
+                        }
+
+                        Log.d("AddressAdapter", "Address deleted successfully.");
+                    } else {
+                        Log.e("AddressAdapter", "Failed to delete address.");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Log.e("AddressAdapter", "Error deleting address: " + t.getMessage());
+                }
+            });
         });
     }
-
     @Override
     public int getItemCount() {
         return addressList.size();
@@ -91,7 +118,7 @@ public class AddressDeliveryAdapter extends RecyclerView.Adapter<AddressDelivery
 
         RadioButton selectAddressRadioButton;
         TextView addressName, addPhone, addressDetails, defaultLabel;
-        ImageView editAddressIcon;
+        ImageView deleteAddressIcon;
 
         public AddressViewHolder(View itemView) {
             super(itemView);
@@ -100,7 +127,7 @@ public class AddressDeliveryAdapter extends RecyclerView.Adapter<AddressDelivery
             addPhone = itemView.findViewById(R.id.phoneNumber);
             addressDetails = itemView.findViewById(R.id.addressDetails);
             defaultLabel = itemView.findViewById(R.id.defaultLabel);
-            editAddressIcon = itemView.findViewById(R.id.editAddressIcon);
+            deleteAddressIcon = itemView.findViewById(R.id.deleteIcon);
         }
     }
 }
