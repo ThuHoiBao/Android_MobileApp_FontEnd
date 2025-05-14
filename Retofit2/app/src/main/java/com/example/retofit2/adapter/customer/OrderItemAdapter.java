@@ -469,7 +469,5 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
                 .create()
                 .show();
     }
-
-
 }
 
