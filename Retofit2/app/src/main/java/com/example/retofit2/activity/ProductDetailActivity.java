@@ -1,9 +1,11 @@
 package com.example.retofit2.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -12,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +35,7 @@ import com.example.retofit2.dto.requestDTO.ProductVariantDTO;
 import com.example.retofit2.dto.requestDTO.ReviewDTO;
 import com.example.retofit2.dto.responseDTO.ResponseObject;
 import com.example.retofit2.utils.SharedPrefManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.squareup.picasso.Picasso;
 
@@ -58,7 +62,7 @@ public class ProductDetailActivity extends AppCompatActivity {
     private View bottomSheetView;
     private List<ProductVariantDTO> productVariants = new ArrayList<>(); // ✅
     private int stockColorItem;
-    private String product_name = "iPhone 16 Pro Max 256GB";
+    private String product_name;
     private ProductVariantDTO selectedVariant = null;
 
     @Override
@@ -73,6 +77,49 @@ public class ProductDetailActivity extends AppCompatActivity {
         productName = findViewById(R.id.productNameTextView);
         price = findViewById(R.id.priceTextView);
         soldCount = findViewById(R.id.soldQuantityTextView);
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.adminNav);
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
+        //   Long userId = getIntent().getLongExtra("userId", -1);
+        Long userId= SharedPrefManager.getUserId();
+        bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.nav_home) {
+                    // Ở trang chủ rồi nên không làm gì
+                    return true;
+                }
+                // Tạm thời comment 2 chức năng này
+                else if (id == R.id.nav_orders) {
+                    Intent intent = new Intent(ProductDetailActivity.this, OrderActivity.class);
+                    intent.putExtra("userId", userId); // userId có thể là String hoặc int, tùy bạn
+                    startActivity(intent);
+                    return true;
+
+                } else if (id == R.id.nav_home) {
+
+                    return true;
+                }
+                else if (id == R.id.nav_account) {
+                    Intent intent = new Intent(ProductDetailActivity.this, ProfileActivity.class);
+                    intent.putExtra("userId", userId); // userId có thể là String hoặc int, tùy bạn
+                    startActivity(intent);
+                    return true;
+                } else if (id == R.id.nav_cart){
+                    Intent intent = new Intent(ProductDetailActivity.this, CartActivity.class);
+                    startActivity(intent);
+                    finish();
+                    return true;
+                }
+
+                return false;
+            }
+
+        });
+
+        Intent intent = getIntent();
+        product_name = intent.getStringExtra("productName");
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
@@ -143,7 +190,12 @@ public class ProductDetailActivity extends AppCompatActivity {
 
         // Gọi API lấy thông tin sản phẩm
         callAPIProductDetail();
-        callAPIReviewProductName("iPhone 16 Pro Max 256GB");
+        if(!product_name.isEmpty()){
+            callAPIReviewProductName(product_name);
+        }
+
+
+
     }
 
     private void callAPIReviewProductName(String produc_name) {

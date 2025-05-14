@@ -96,7 +96,7 @@ public class PaymentWebViewActivity extends AppCompatActivity {
                         // Giao dịch thành công
                         Toast.makeText(PaymentWebViewActivity.this, "Thanh toán thành công", Toast.LENGTH_LONG).show();
                         // Chuyển hướng đến trang đơn hàng
-                        startActivity(new Intent(PaymentWebViewActivity.this, CartActivity.class));
+                        startActivity(new Intent(PaymentWebViewActivity.this, OrderActivity.class));
                     } else {
                         // Giao dịch thất bại
                         Toast.makeText(PaymentWebViewActivity.this, "Thanh toán thất bại", Toast.LENGTH_LONG).show();

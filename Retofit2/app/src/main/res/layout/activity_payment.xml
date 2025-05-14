@@ -147,12 +147,11 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/productRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="328dp"
+        android:layout_height="540dp"
         android:layout_marginBottom="16dp"
         android:orientation="vertical" />
-    <!-- Tổng cộng và tiết kiệm -->
 
-    <!-- Nút Đặt hàng -->
+    <!-- Tổng cộng và tiết kiệm -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -173,15 +172,12 @@
                 android:text="₫31.500"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
     </LinearLayout>
-
+    <!-- Nút Đặt hàng -->
     <Button
         android:id="@+id/placeOrderButton"
         android:layout_width="match_parent"

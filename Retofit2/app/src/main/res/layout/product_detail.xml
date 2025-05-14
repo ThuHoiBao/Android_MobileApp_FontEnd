@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp">
 
     <!-- FrameLayout để hiển thị ViewPager2 và overlay các nút Previous và Next -->
     <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="350dp">
 
@@ -45,13 +47,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:orientation="horizontal" />
+        android:orientation="horizontal"
+        android:layout_below="@id/frameLayout"
+        />
 
     <!-- LinearLayout để hiển thị tên sản phẩm, giá bán và số lượng đã bán -->
     <LinearLayout
+        android:id="@id/productDetail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_below="@id/itemRecyclerView"
         android:layout_marginTop="8dp">
 
         <!-- Tên sản phẩm nằm ở trên, chiếm 1 hàng -->
@@ -68,6 +74,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+
         android:layout_marginTop="8dp">
 
         <!-- Giá bán nằm bên trái -->
@@ -91,21 +98,29 @@
         </LinearLayout>
 
     </LinearLayout>
+
+
     <View
+        android:id="@+id/view_offset_helper"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:background="#CCCCCC" />
-    
+        android:background="#CCCCCC"
+        android:layout_below="@id/productDetail"
+        />
+
     <LinearLayout
+        android:id="@+id/layoutCart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingEnd="8dp"
         android:layout_marginTop="20dp"
-        android:weightSum="1">
+        android:weightSum="1"
+        android:layout_below="@id/view_offset_helper"
+        >
 
         <TextView
             android:layout_width="wrap_content"
@@ -150,6 +165,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:orientation="vertical" />
+        android:orientation="vertical"
+        android:layout_below="@+id/layoutCart"
+        android:layout_above="@id/adminNav"
+        />
 
-</LinearLayout>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/adminNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        app:itemIconTint="@color/bottom_nav_color"
+        app:itemTextColor="@color/bottom_nav_color"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/admin_nav_menu" />
+</RelativeLayout>

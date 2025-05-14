@@ -38,7 +38,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CustomerHomeActivity extends AppCompatActivity implements HomeCatagoryAdapter.OnCategoryClickListener {
+public class CustomerHomeActivity extends AppCompatActivity implements HomeCatagoryAdapter.OnCategoryClickListener, HomeProductAdapter.OnProductClickListener {
     private RecyclerView categoryRecyclerView, productRecyclerView;
     private HomeCatagoryAdapter categoryAdapter;
     private HomeProductAdapter productAdapter;
@@ -83,7 +83,12 @@ public class CustomerHomeActivity extends AppCompatActivity implements HomeCatag
         BottomNavigationView bottomNavigationView = findViewById(R.id.adminNav);
         bottomNavigationView.setSelectedItemId(R.id.nav_home);
      //   Long userId = getIntent().getLongExtra("userId", -1);
-        Long userId= SharedPrefManager.getUserId();
+        // Khởi tạo đối tượng SharedPrefManager
+        SharedPrefManager sharedPrefManager = new SharedPrefManager(this);
+
+        // Lấy userId từ SharedPreferences
+        long userId = sharedPrefManager.getUserId();
+
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -98,18 +103,29 @@ public class CustomerHomeActivity extends AppCompatActivity implements HomeCatag
                     intent.putExtra("userId", userId); // userId có thể là String hoặc int, tùy bạn
                     startActivity(intent);
                     return true;
-
-                } else if (id == R.id.nav_home) {
-
-                    return true;
                 }
                 else if (id == R.id.nav_account) {
+                    if(userId == 0){
+                        Intent intent = new Intent(CustomerHomeActivity.this, Login.class);
+                        startActivity(intent);
+                        finish();
+                        return true;
+                    }
                     Intent intent = new Intent(CustomerHomeActivity.this, ProfileActivity.class);
                     intent.putExtra("userId", userId); // userId có thể là String hoặc int, tùy bạn
                     startActivity(intent);
-                return true;
-            }
-
+                    return true;
+                } else if(id == R.id.nav_cart){
+                    if(userId == 0){
+                        Intent intent = new Intent(CustomerHomeActivity.this, Login.class);
+                        startActivity(intent);
+                        finish();
+                        return true;
+                    }
+                    Intent intent = new Intent(CustomerHomeActivity.this, CartActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
                 return false;
             }
 
@@ -190,7 +206,7 @@ public class CustomerHomeActivity extends AppCompatActivity implements HomeCatag
                     // Cập nhật danh sách sản phẩm vào RecyclerView
                     productRecyclerView.setLayoutManager(new GridLayoutManager(CustomerHomeActivity.this, 2));
 
-                    productAdapter = new HomeProductAdapter(productList);
+                    productAdapter = new HomeProductAdapter(productList, CustomerHomeActivity.this);
                     productRecyclerView.setAdapter(productAdapter);
                 } else {
                     Toast.makeText(CustomerHomeActivity.this, "Lỗi khi tải dữ liệu", Toast.LENGTH_SHORT).show();
@@ -253,7 +269,7 @@ public class CustomerHomeActivity extends AppCompatActivity implements HomeCatag
                 if (response.isSuccessful() && response.body() != null) {
                     List<ProductRequestDTO> productList = response.body();
                     productRecyclerView.setLayoutManager(new GridLayoutManager(CustomerHomeActivity.this, 2));
-                    productAdapter = new HomeProductAdapter(productList);
+                    productAdapter = new HomeProductAdapter(productList, CustomerHomeActivity.this);
                     productRecyclerView.setAdapter(productAdapter);
                 }
             }
@@ -265,5 +281,13 @@ public class CustomerHomeActivity extends AppCompatActivity implements HomeCatag
         });
     }
 
-
+    @Override
+    public void onProductClick(String productName) {
+        if(!productName.isEmpty()){
+            Intent intent = new Intent(CustomerHomeActivity.this, ProductDetailActivity.class);
+            intent.putExtra("productName", productName);
+            startActivity(intent);
+            finish();
+        }
+    }
 }

@@ -15,6 +15,7 @@
         android:orientation="horizontal"
         android:paddingStart="10dp"
         android:paddingTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -49,8 +50,9 @@
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/linearLayout">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
         <CheckBox
             android:id="@+id/selectAllCheckbox"
@@ -72,27 +74,30 @@
     </LinearLayout>
 
     <!-- RecyclerView -->
+
+    <!-- Total Layout -->
+
+    <!-- Shipping Button -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cartRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/totalLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout1"
+        app:layout_constraintBottom_toTopOf="@+id/totalLayout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/linearLayout1" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Total Layout -->
     <LinearLayout
         android:id="@+id/totalLayout"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@id/shippingButton"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cartRecyclerView"
+        app:layout_constraintBottom_toTopOf="@+id/shippingButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cartRecyclerView">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/totalAmountText"
@@ -103,24 +108,34 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- Shipping Button -->
-
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/shippingButton"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/round_back_primary_15"
         android:text="Shipping"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
         android:textSize="20dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/adminNav"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/adminNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:itemIconTint="@color/bottom_nav_color"
+        app:itemTextColor="@color/bottom_nav_color"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/admin_nav_menu" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

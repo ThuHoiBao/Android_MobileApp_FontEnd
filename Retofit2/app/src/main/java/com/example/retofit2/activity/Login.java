@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,6 +56,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
     CheckBox selectRemember;
     GoogleApiClient googleApiClient;
     LoadingDialog loadingDialog = new LoadingDialog(Login.this);
+    ImageButton backIcon;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,6 +77,17 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
 
         usernameET = findViewById(R.id.usernameET);
         passwordET = findViewById(R.id.passwordET);
+        backIcon = findViewById(R.id.backIcon);
+
+        backIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Login.this, CustomerHomeActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
         final ImageView passwordIcon = findViewById(R.id.passwordIcon);
         final TextView signUpBtn = findViewById(R.id.signUpBtn);
         final TextView fgPassWordBtn = findViewById(R.id.forgotPassword);
@@ -139,7 +152,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
         fgPassWordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Login.this, PaymentActivity.class);
+                Intent intent = new Intent(Login.this, ForgetPassword.class);
                 startActivity(intent);
             }
         });
@@ -180,7 +193,7 @@ public class Login extends AppCompatActivity implements GoogleApiClient.Connecti
     }
 
     private void navigateToSecondActivity(){
-        Intent intent = new Intent(Login.this, ProductDetailActivity.class);
+        Intent intent = new Intent(Login.this, CustomerHomeActivity.class);
         startActivity(intent);
         finish();
     }

@@ -24,4 +24,5 @@ public interface OrderItemAPI {
 
     @PUT("orders/cancel/{orderId}")
     Call<Void> cancelOrder(@Path("orderId") int orderId);
+
 }

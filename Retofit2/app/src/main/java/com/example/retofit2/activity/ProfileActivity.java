@@ -22,6 +22,7 @@ import com.example.retofit2.api.UserAPI;
 import com.example.retofit2.api.retrofit.APIRetrofit;
 import com.example.retofit2.dto.requestDTO.UserRequestDTO;
 import com.example.retofit2.dto.responseDTO.UserResponseDTO;
+import com.example.retofit2.utils.SharedPrefManager;
 import com.google.gson.Gson;
 
 import java.io.File;
@@ -46,7 +47,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private EditText dtDateOfBirth;  // Reference tới EditText của Ngày sinh
     private EditText txtName;
-    private TextView txtEmail,txtPhone;
+    private TextView txtEmail,txtPhone, txtLogout;
     private ImageView backImage;
     CircleImageView imgProfile;
     private Uri imageUri;
@@ -74,6 +75,14 @@ public class ProfileActivity extends AppCompatActivity {
         txtEmail = findViewById(R.id.txtEmail);
         txtPhone=findViewById(R.id.txtPhone);
         imgProfile=findViewById(R.id.imgProfile);
+        txtLogout = findViewById(R.id.btnLogout);
+        txtLogout.setOnClickListener(v -> {
+            SharedPrefManager sharedPrefManager = new SharedPrefManager(ProfileActivity.this);
+            sharedPrefManager.clearSharedPreferences();
+            Intent intent = new Intent(ProfileActivity.this, Login.class);
+            startActivity(intent);
+            finish();
+        });
         // Cài đặt sự kiện khi người dùng nhấn vào EditText
         txtName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,6 +107,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
         imgProfile.setOnClickListener(v -> openImageChooser());
+
 
 
     }

@@ -22,6 +22,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.retofit2.R;
 import com.example.retofit2.activity.FeedBackActivity;
+import com.example.retofit2.activity.PaymentActivity;
+import com.example.retofit2.activity.ProductDetailActivity;
 import com.example.retofit2.api.OrderItemAPI;
 import com.example.retofit2.api.ReviewAPI;
 import com.example.retofit2.api.retrofit.APIRetrofit;
@@ -29,6 +31,7 @@ import com.example.retofit2.dto.requestDTO.OrderItemRequestDTO;
 import com.example.retofit2.dto.requestDTO.ReviewRequestDTO;
 import com.example.retofit2.dto.responseDTO.ReviewResponseDTO;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat; // Import SimpleDateFormat
 import java.util.List;
 
@@ -59,8 +62,13 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
         // Set dữ liệu
         holder.productName.setText(order.getProductName());
         holder.productColor.setText("Màu sắc: " + order.getColor());
-        holder.productPrice.setText("Giá: " + order.getPrice()+"₫");
-        holder.productTotal.setText("Tổng: " + order.getTotalPrice()+"₫");
+
+        DecimalFormat decimalFormat = new DecimalFormat("#,###"); // Define the decimal format
+        String formattedProductPrice = decimalFormat.format(order.getPrice()); // Format the product price
+        holder.productPrice.setText(formattedProductPrice + "₫"); // Set the formatted price to the view
+
+        String formattedTotalPrice = decimalFormat.format(order.getTotalPrice()); // Format the product price
+        holder.productTotal.setText("Tổng: " + formattedTotalPrice+"₫");
         holder.productQuantity.setText("x"+order.getQuantity());
 
 
@@ -71,21 +79,25 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
         String orderStatusing="";
         // Trạng thái đơn hàng
         if (order.getOrderStatus().equals("COMPLETED")) {
-            orderStatus="Đã giao hàng.   Mã đơn hàng: " + order.getOrderId();
-            orderStatusing="Kiện hàng của bạn đã được giao thành công";
+            orderStatus="Đã giao hàng.   ĐH: " + order.getOrderId();
+            orderStatusing="Đơn hàng của bạn đã được giao thành công";
         } else if (order.getOrderStatus().equals("SHIPPED")) {
-            orderStatus="Đang vận.   Mã đơn hàng: "+ order.getOrderId();
-            orderStatusing="Kiện hàng của bạn đang được vận chuyển";
+            orderStatus="Đang vận.   ĐH: "+ order.getOrderId();
+            orderStatusing="Đơn hàng của bạn đang được vận chuyển";
         }  else if(order.getOrderStatus().equals("CANCELLED")){
-            orderStatus="Đã hủy.   Mã đơn hàng: "+ order.getOrderId();
-            orderStatusing="Kiện hàng của bạn đã được hủy";
+            orderStatus="Đã hủy.   ĐH: "+ order.getOrderId();
+            orderStatusing="Đơn hàng của bạn đã được hủy";
         }
         else if(order.getOrderStatus().equals("FEEDBACKED")){
-            orderStatus="Đã đánh giá.   Mã đơn hàng: "+ order.getOrderId();
+            orderStatus="Đã đánh giá.   ĐH: "+ order.getOrderId();
             orderStatusing="Kiện hàng của bạn đã được đánh giá";
         }
+        else if(order.getOrderStatus().equals("PENDING")){
+            orderStatus="Chưa thanh toán.   ĐH: "+ order.getOrderId();
+            orderStatusing="Đơn hàng của bạn chưa được thanh toán";
+        }
         else {
-            orderStatus="Đã đặt hàng.   Mã đơn hàng: "+ order.getOrderId();
+            orderStatus="Đã đặt hàng.   ĐH: "+ order.getOrderId();
             orderStatusing="Kiện hàng của bạn đã được đặt";
         }
 
@@ -115,16 +127,10 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
             holder.orderCancle.setLayoutParams(params);
             holder.reorderButton.setVisibility(View.GONE);
             holder.reviewButton.setVisibility(View.GONE);
-            holder.orderCancle.setVisibility(View.VISIBLE);
+            holder.orderCancle.setVisibility(View.GONE);
             holder.viewFeedback.setVisibility(View.GONE);
             holder.btnPayment.setVisibility(View.GONE);
 
-            holder.orderCancle.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showCancelDialog(order.getOrderId());
-                }
-            });
         }
 
         else if(order.getOrderStatus().equals("FEEDBACKED")) {
@@ -184,15 +190,19 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
         }
         else if (order.getOrderStatus().equals("PENDING")) {
 
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.reorderButton.getLayoutParams();
-            int marginInDp = 130; // số dp bạn muốn
-            float scale = holder.btnPayment.getContext().getResources().getDisplayMetrics().density;
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.orderCancle.getLayoutParams();
+            int marginInDp = 10; // số dp bạn muốn
+            float scale = holder.orderCancle.getContext().getResources().getDisplayMetrics().density;
             int marginInPx = (int) (marginInDp * scale + 0.5f);
             params.setMarginStart(marginInPx);
+
+
             holder.btnPayment.setLayoutParams(params);
+
+
             holder.reorderButton.setVisibility(View.GONE);
             holder.reviewButton.setVisibility(View.GONE);
-            holder.orderCancle.setVisibility(View.GONE);
+            holder.orderCancle.setVisibility(View.VISIBLE);
             holder.viewFeedback.setVisibility(View.GONE);
             holder.btnPayment.setVisibility(View.VISIBLE);
         }
@@ -259,11 +269,52 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
             }
         });
 
+        holder.reorderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Truyền dữ liệu qua Intent
+                Intent intent = new Intent(context, ProductDetailActivity.class);
+                intent.putExtra("productName", order.getProductName());  // Truyền orderItemId
 
+                // Mở FeedBackActivity
+//                context.startActivity(intent);
+                Activity activity = (Activity) context;
+                intent.putExtra("position", holder.getAdapterPosition());
+                activity.startActivityForResult(intent, 123); // requestCode = 123
+            }
+        });
         holder.linearLayout.setOnClickListener(v -> {
             // Khi nhấn vào LinearLayout, mở Dialog chi tiết đơn hàng
             showOrderDetailsDialog(order);
 
+        });
+        holder.productImage.setOnClickListener(v->{
+            Intent intent = new Intent(context, ProductDetailActivity.class);
+            intent.putExtra("productName", order.getProductName());  // Truyền orderItemId
+
+            // Mở FeedBackActivity
+//                context.startActivity(intent);
+            Activity activity = (Activity) context;
+            intent.putExtra("position", holder.getAdapterPosition());
+            activity.startActivityForResult(intent, 123); // requestCode = 123
+        });
+
+        holder.btnPayment.setOnClickListener(v->{
+            Intent intent = new Intent(context, PaymentActivity.class);
+            intent.putExtra("orderId", order.getOrderId());  // Truyền orderItemId
+
+            // Mở FeedBackActivity
+//                context.startActivity(intent);
+            Activity activity = (Activity) context;
+            intent.putExtra("position", holder.getAdapterPosition());
+            activity.startActivityForResult(intent, 123); // requestCode = 123
+        });
+
+        holder.orderCancle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCancelDialog(order.getOrderId());
+            }
         });
 
         // Set ảnh sản phẩm
@@ -294,7 +345,10 @@ public class OrderItemAdapter extends RecyclerView.Adapter<OrderItemAdapter.Orde
         productNameText.setText(" " + order.getProductName());
         productQuantityText.setText(" x" + order.getQuantity());
         productColorText.setText(" " + order.getColor());
-        productPriceText.setText(" " + order.getPrice() + "₫");
+
+        DecimalFormat decimalFormat = new DecimalFormat("#,###"); // Define the decimal format
+        String formattedProductPrice = decimalFormat.format(order.getTotalPrice()); // Format the product price
+        productPriceText.setText(" " + formattedProductPrice + "₫");
         customerNameText.setText(" " + order.getFullName());
         customerAddressText.setText("" + order.getAddress());
         customerPhoneText.setText("" + order.getPhoneNumber());
