@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -18,13 +18,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import com.example.retofit2.R;
 import com.example.retofit2.api.ICartAPI;
 import com.example.retofit2.api.retrofit.APIRetrofit;
 import com.example.retofit2.dto.requestDTO.CardItemDTO;
 import com.example.retofit2.dto.requestDTO.CartItemUpdateRequestDTO;
-import com.example.retofit2.dto.responseDTO.ResponseObject;
+import com.example.retofit2.dto.responseDTO.CartItemUpdateResultDTO;
 import com.example.retofit2.utils.SharedPrefManager;
 import com.squareup.picasso.Picasso;
 
@@ -38,24 +37,24 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-// ... (imports như cũ)
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
     private List<CardItemDTO> cartItems;
     private double totalAmount = 0.0;
     private RecyclerView recyclerView;
     private TextView totalAmountText;
-
+    private OnCartItemClickListener listener;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final Runnable updateRunnable = this::sendBatchUpdate;
     private final long DEBOUNCE_DELAY = 800;
     private final Map<String, CardItemDTO> modifiedItems = new HashMap<>();
-    long  userId = SharedPrefManager.getUserId();
-    String token = SharedPrefManager.getToken();
-    public CartAdapter(List<CardItemDTO> cartItems, RecyclerView recyclerView, TextView totalAmountText) {
+    private final String token = SharedPrefManager.getToken();
+
+    public CartAdapter(List<CardItemDTO> cartItems, RecyclerView recyclerView, TextView totalAmountText, OnCartItemClickListener listener) {
         this.cartItems = cartItems;
         this.recyclerView = recyclerView;
         this.totalAmountText = totalAmountText;
+        this.listener = listener;
     }
 
     @NonNull
@@ -67,161 +66,162 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
-        CardItemDTO cardItemDTO = cartItems.get(position);
-        holder.productName.setText(cardItemDTO.getProductName());
-        holder.color.setText(cardItemDTO.getColor());
+        CardItemDTO item = cartItems.get(position);
 
-        DecimalFormat decimalFormat = new DecimalFormat("#,###");
-        String formattedPrice = decimalFormat.format(cardItemDTO.getPrice());
-        holder.productPrice.setText(formattedPrice + "đ");
+        holder.productName.setText(item.getProductName());
+        holder.color.setText(item.getColor());
+        holder.productPrice.setText(new DecimalFormat("#,###").format(item.getPrice()) + "đ");
+        holder.quantity.setText(String.valueOf(item.getQuantity()));
 
-
-
-        // Gỡ TextWatcher cũ nếu có
-        if (holder.quantityWatcher != null) {
-            holder.quantity.removeTextChangedListener(holder.quantityWatcher);
-        }
-
-        holder.quantity.setText(String.valueOf(cardItemDTO.getQuantity()));
-
-        // Tải ảnh sản phẩm
-        String imageUrl = cardItemDTO.getProductImage();
-        if (imageUrl != null && !imageUrl.isEmpty()) {
-            Picasso.get().load(imageUrl).into(holder.productImage);
+        if (item.getProductImage() != null && !item.getProductImage().isEmpty()) {
+            Picasso.get().load(item.getProductImage()).into(holder.productImage);
         } else {
             holder.productImage.setImageResource(R.drawable.iphone3);
         }
 
-        holder.checkBox.setChecked(cardItemDTO.isSelected());
+        // Gỡ và gán lại checkbox listener
+        holder.checkBox.setOnCheckedChangeListener(null);
+        holder.checkBox.setChecked(item.isSelected());
+        holder.checkBox.setOnCheckedChangeListener((btn, isChecked) -> {
+            item.setSelected(isChecked);
+            updateTotalAmount();
+        });
 
-        if(cardItemDTO.isOutOfStockItems()){
+        if (item.isOutOfStockItems()) {
             holder.checkBox.setEnabled(false);
             holder.itemView.setAlpha(0.7f);
             holder.increaseButton.setEnabled(false);
-            holder.deleteButton.setEnabled(true);
+            holder.decreaseButton.setEnabled(false);
             holder.quantity.setEnabled(false);
-            holder.message.setText("Hết hàng");
+            String message = item.getMessage();
+            holder.message.setText(message);
+            if (message != null && !message.isEmpty()) {
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    int currentPosition = holder.getAdapterPosition();
+                    if (currentPosition != RecyclerView.NO_POSITION) {
+                        CardItemDTO currentItem = cartItems.get(currentPosition);
+                        if (message.equals(currentItem.getMessage())) {
+                            currentItem.setMessage("");
+                            holder.message.setText("");
+                        }
+                    }
+                }, 3000);
+            }
+
         } else {
             holder.checkBox.setEnabled(true);
             holder.itemView.setAlpha(1.0f);
             holder.increaseButton.setEnabled(true);
             holder.decreaseButton.setEnabled(true);
             holder.quantity.setEnabled(true);
-            holder.message.setText("");
+            String message = item.getMessage();
+            holder.message.setText(message);
+            if (message != null && !message.isEmpty()) {
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    int currentPosition = holder.getAdapterPosition();
+                    if (currentPosition != RecyclerView.NO_POSITION) {
+                        CardItemDTO currentItem = cartItems.get(currentPosition);
+                        if (message.equals(currentItem.getMessage())) {
+                            currentItem.setMessage("");
+                            holder.message.setText("");
+                        }
+                    }
+                }, 3000);
+            }
         }
 
-        // Nút tăng
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(item); // Gửi sản phẩm được click
+            }
+        });
+
+        // Xử lý nút tăng
         holder.increaseButton.setOnClickListener(v -> {
-            int currentQty = cardItemDTO.getQuantity();
-            if (currentQty < 10) {
-                int newQty = currentQty + 1;
-                cardItemDTO.setQuantity(newQty);
-                if (!holder.quantity.getText().toString().equals(String.valueOf(newQty))) {
-                    holder.quantity.setText(String.valueOf(newQty));
-                }
-                trackItemChange(cardItemDTO);
+            int qty = item.getQuantity();
+            if (qty < 10) {
+                item.setQuantity(qty + 1);
+                holder.quantity.setText(String.valueOf(item.getQuantity()));
+                trackItemChange(item);
                 updateTotalAmount();
             }
         });
 
-        // Nút giảm
+        // Xử lý nút giảm
         holder.decreaseButton.setOnClickListener(v -> {
-            int currentQty = cardItemDTO.getQuantity();
-            if (currentQty > 1) {
-                int newQty = currentQty - 1;
-                cardItemDTO.setQuantity(newQty);
-                if (!holder.quantity.getText().toString().equals(String.valueOf(newQty))) {
-                    holder.quantity.setText(String.valueOf(newQty));
-                }
-                trackItemChange(cardItemDTO);
+            int qty = item.getQuantity();
+            if (qty > 1) {
+                item.setQuantity(qty - 1);
+                holder.quantity.setText(String.valueOf(item.getQuantity()));
+                trackItemChange(item);
                 updateTotalAmount();
             }
         });
 
-        // CheckBox chọn sản phẩm
-        holder.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            cardItemDTO.setSelected(isChecked);
-            updateTotalAmount();
-        });
+        // Gỡ watcher cũ trước khi gán mới
+        if (holder.quantityWatcher != null) {
+            holder.quantity.removeTextChangedListener(holder.quantityWatcher);
+        }
 
-        // Cập nhật TextWatcher mới
         holder.quantityWatcher = new TextWatcher() {
-            private boolean isEditing = false;
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            private boolean editing = false;
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (isEditing) return;
-
-                isEditing = true;
+                if (editing) return;
+                editing = true;
                 try {
-                    String input = s.toString().trim();
-                    if (!input.isEmpty()) {
-                        int newQty = Integer.parseInt(input);
-                        if (newQty < 1) newQty = 1;
-                        if (newQty > 10) newQty = 10;
-
-                        if (cardItemDTO.getQuantity() != newQty) {
-                            cardItemDTO.setQuantity(newQty);
-                            trackItemChange(cardItemDTO);
-                            updateTotalAmount();
-                        }
-
-                        if (!input.equals(String.valueOf(newQty))) {
-                            holder.quantity.setText(String.valueOf(newQty));
-                            holder.quantity.setSelection(holder.quantity.getText().length());
-                        }
+                    int newQty = Integer.parseInt(s.toString().trim());
+                    newQty = Math.max(1, Math.min(newQty, 10));
+                    if (newQty != item.getQuantity()) {
+                        item.setQuantity(newQty);
+                        trackItemChange(item);
+                        updateTotalAmount();
                     }
-                } catch (NumberFormatException e) {
+                    if (!s.toString().equals(String.valueOf(newQty))) {
+                        holder.quantity.setText(String.valueOf(newQty));
+                        holder.quantity.setSelection(holder.quantity.getText().length());
+                    }
+                } catch (Exception e) {
                     holder.quantity.setText("1");
                     holder.quantity.setSelection(1);
-                    cardItemDTO.setQuantity(1);
-                    trackItemChange(cardItemDTO);
+                    item.setQuantity(1);
+                    trackItemChange(item);
                     updateTotalAmount();
                 }
-                isEditing = false;
+                editing = false;
             }
+
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
         };
 
         holder.quantity.addTextChangedListener(holder.quantityWatcher);
 
-        holder.deleteButton.setOnClickListener(v -> {
-            int cardItemId = cardItemDTO.getCartItemId();
-            deleteCartItem(cardItemId);
-        });
+        // Xử lý nút xóa
+        holder.deleteButton.setOnClickListener(v -> deleteCartItem(item.getCartItemId()));
     }
 
-    private void deleteCartItem(int cardItemId) {
-        ICartAPI apiService = APIRetrofit.getCartAPIService(token);
-        apiService.removeCartItem(userId, cardItemId).enqueue(new Callback<String>() {
+    private void deleteCartItem(int cartItemId) {
+        APIRetrofit.getCartAPIService(token).removeCartItem(cartItemId).enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if (response.isSuccessful()) {
-                    String result = response.body();
-                    Log.d("CartAdapter", "Item deleted successfully. Server response: " + result);
-
-                    cartItems.removeIf(item -> item.getCartItemId() == cardItemId);
+                    cartItems.removeIf(item -> item.getCartItemId() == cartItemId);
                     notifyDataSetChanged();
                     updateTotalAmount();
-                } else {
-                    Log.e("CartAdapter", "Failed to delete item.");
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.e("CartAdapter", "Error deleting item: " + t.getMessage());
+                Log.e("CartAdapter", "Delete error: " + t.getMessage());
             }
         });
     }
 
     private void trackItemChange(CardItemDTO item) {
-        String key = item.getProductName() + "_" + item.getColor();
+        String key = item.getCartItemId() + "";
         modifiedItems.put(key, item);
         handler.removeCallbacks(updateRunnable);
         handler.postDelayed(updateRunnable, DEBOUNCE_DELAY);
@@ -232,34 +232,35 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
 
         List<CartItemUpdateRequestDTO> updates = new ArrayList<>();
         for (CardItemDTO item : modifiedItems.values()) {
-            updates.add(new CartItemUpdateRequestDTO(item.getProductName(), item.getColor(), item.getQuantity()));
+            updates.add(new CartItemUpdateRequestDTO(item.getCartItemId(), item.getProductName(), item.getColor(), item.getQuantity()));
         }
 
-
-        ICartAPI apiService = APIRetrofit.getCartAPIService(token);
-
-        apiService.updateCartItems(userId, updates).enqueue(new Callback<ResponseObject>() {
+        APIRetrofit.getCartAPIService(token).updateCartItems(updates).enqueue(new Callback<List<CartItemUpdateResultDTO>>() {
             @Override
-            public void onResponse(Call<ResponseObject> call, Response<ResponseObject> response) {
-                if (response.isSuccessful()) {
-                    updateTotalAmount();
-                    Log.d("CartAdapter", "Batch update successful.");
+            public void onResponse(Call<List<CartItemUpdateResultDTO>> call, Response<List<CartItemUpdateResultDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    for (CartItemUpdateResultDTO result : response.body()) {
+                        for (int i = 0; i < cartItems.size(); i++) {
+                            CardItemDTO item = cartItems.get(i);
+                            if (item.getCartItemId() == result.getCartItemId()) {
+                                item.setQuantity(result.getUpdatedQuantity());
+                                item.setOutOfStockItems(result.isOutOfStock());
+                                item.setMessage(result.getMessage());
+                                notifyItemChanged(i);
+                                break;
+                            }
+                        }
+                    }
                     modifiedItems.clear();
-                } else {
-                    Log.e("CartAdapter", "Batch update failed.");
+                    updateTotalAmount();
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseObject> call, Throwable t) {
+            public void onFailure(Call<List<CartItemUpdateResultDTO>> call, Throwable t) {
                 Log.e("CartAdapter", "Batch update error: " + t.getMessage());
             }
         });
-    }
-
-    @Override
-    public int getItemCount() {
-        return cartItems.size();
     }
 
     public void updateTotalAmount() {
@@ -269,11 +270,12 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 totalAmount += item.getPrice() * item.getQuantity();
             }
         }
-        DecimalFormat decimalFormat = new DecimalFormat("#,###");
-        String formattedPrice = decimalFormat.format(totalAmount);
-        totalAmountText.setText("Total Amount: " + formattedPrice + "đ");
+        totalAmountText.setText("Total Amount: " + new DecimalFormat("#,###").format(totalAmount) + "đ");
+    }
 
-        recyclerView.post(() -> notifyDataSetChanged());
+    @Override
+    public int getItemCount() {
+        return cartItems.size();
     }
 
     public static class CartViewHolder extends RecyclerView.ViewHolder {
@@ -287,8 +289,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         public CartViewHolder(@NonNull View itemView) {
             super(itemView);
             productName = itemView.findViewById(R.id.productName);
-            color = itemView.findViewById(R.id.productColor);
             productPrice = itemView.findViewById(R.id.productPrice);
+            color = itemView.findViewById(R.id.productColor);
             quantity = itemView.findViewById(R.id.quantity);
             productImage = itemView.findViewById(R.id.productImage);
             checkBox = itemView.findViewById(R.id.selectProductCheckbox);
@@ -297,5 +299,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
             deleteButton = itemView.findViewById(R.id.deleteButton);
             message = itemView.findViewById(R.id.message);
         }
+    }
+
+    public interface OnCartItemClickListener {
+        void onItemClick(CardItemDTO item);
     }
 }

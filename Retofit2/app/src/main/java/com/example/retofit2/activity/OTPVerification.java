@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,6 +80,8 @@ public class OTPVerification extends AppCompatActivity {
     private int selectecPosition = 0;
     private String getEmail;
     private String OTP;
+
+    private ImageButton backIcon;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +94,7 @@ public class OTPVerification extends AppCompatActivity {
         otpEt4 = findViewById(R.id.otpET4);
         otpEt5 = findViewById(R.id.otpET5);
         otpEt6 = findViewById(R.id.otpET6);
+        backIcon = findViewById(R.id.backIcon);
 
         resendBtn = findViewById(R.id.resendBtn);
         final Button verifyBtn = findViewById(R.id.verifyBtn);
@@ -122,6 +126,16 @@ public class OTPVerification extends AppCompatActivity {
 
         //start resend count doww timer
         startCountDownTimer();
+
+        backIcon.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OTPVerification.this, ForgetPassword.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         resendBtn.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -202,6 +216,7 @@ public class OTPVerification extends AppCompatActivity {
                 resendEnaled = true;
                 resendBtn.setText("Resend Code");
                 resendBtn.setTextColor(getResources().getColor((R.color.primary)));
+                OTP = null;
             }
         }.start();
 
@@ -244,7 +259,9 @@ public class OTPVerification extends AppCompatActivity {
                     String otp = response.body();
                     otpCallback.onOtpReceived(otp);
                 } else {
-                    CustomToast.makeText(OTPVerification.this, "Failed to send OTP!", CustomToast.LONG, CustomToast.ERROR, true, Gravity.TOP,350, 100, new View.OnClickListener() {
+                    CustomToast.makeText(OTPVerification.this, "Failed to send OTP!",
+                            CustomToast.LONG, CustomToast.ERROR, true, Gravity.TOP,350,
+                            100, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             // Handle the click event here

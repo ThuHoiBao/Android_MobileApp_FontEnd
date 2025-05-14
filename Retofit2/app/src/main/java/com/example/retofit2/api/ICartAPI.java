@@ -3,6 +3,7 @@ package com.example.retofit2.api;
 import com.example.retofit2.dto.requestDTO.AddProductToCartRequestDTO;
 import com.example.retofit2.dto.requestDTO.CardItemDTO;
 import com.example.retofit2.dto.requestDTO.CartItemUpdateRequestDTO;
+import com.example.retofit2.dto.responseDTO.CartItemUpdateResultDTO;
 import com.example.retofit2.dto.responseDTO.ResponseObject;
 
 import java.util.List;
@@ -20,8 +21,7 @@ public interface ICartAPI {
     Call<List<CardItemDTO>> getCartItems( @Query("userId") long userId);
 
     @PUT("cart/update")
-    Call<ResponseObject> updateCartItems(
-            @Query("userId") long userId,
+    Call<List<CartItemUpdateResultDTO>> updateCartItems(
             @Body List<CartItemUpdateRequestDTO> updates);
 
     @POST("cart/add")
@@ -31,5 +31,5 @@ public interface ICartAPI {
     );
 
     @DELETE("cart/item")
-    Call<String> removeCartItem(@Query("userId") long userId, @Query("cartItemId") int cardItemId);
+    Call<String> removeCartItem(@Query("cartItemId") int cardItemId);
 }

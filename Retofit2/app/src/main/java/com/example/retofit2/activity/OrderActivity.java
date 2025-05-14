@@ -26,6 +26,7 @@ import com.example.retofit2.adapter.customer.OrderStatusAdapter;
 import com.example.retofit2.api.retrofit.APIRetrofit;
 import com.example.retofit2.dto.requestDTO.OrderItemRequestDTO;
 import com.example.retofit2.dto.requestDTO.OrderStatusRequestDTO;
+import com.example.retofit2.utils.SharedPrefManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator;
 
@@ -57,7 +58,7 @@ public class OrderActivity extends AppCompatActivity {
     private List<OrderStatusRequestDTO> statusList;
 
     private LinearLayout linearLayout;
-
+    int userIdInt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,9 +68,9 @@ public class OrderActivity extends AppCompatActivity {
         // Khởi tạo RecyclerView
         orderRecyclerView = findViewById(R.id.orderProductRecyclerView);
         // Tạo dữ liệu giả
-       Long userId = getIntent().getLongExtra("userId", -1);
+       Long userId = SharedPrefManager.getUserId();
        // int userId=1;
-        int userIdInt = userId.intValue();
+         userIdInt = userId.intValue();
 
         getAllOrderItem(userIdInt);
         // Gán adapter cho RecyclerView
@@ -92,17 +93,37 @@ public class OrderActivity extends AppCompatActivity {
                 int id = item.getItemId();
                 if (id == R.id.nav_home) {
                     Intent intent = new Intent(OrderActivity.this, CustomerHomeActivity.class);
+                    intent.putExtra("userId", userId); // userId có thể là String hoặc int, tùy bạn
                     startActivity(intent);
                     return true;
                 }
                 // Tạm thời comment 2 chức năng này
                 else if (id == R.id.nav_orders) {
-
+                    Intent intent = new Intent(OrderActivity.this, OrderActivity.class);
+                    intent.putExtra("userId", userId); // userId có thể là String hoặc int, tùy bạn
+                    startActivity(intent);
                     return true;
-
-                } else if (id == R.id.nav_home) {
-                    // startActivity(new Intent(AdminHomeActivity.this, AdminAccountActivity.class));
-                    //tvAdminName.setText("Chức năng Tài khoản đang cập nhật...");
+                }
+                else if (id == R.id.nav_account) {
+                    if(userId == 0){
+                        Intent intent = new Intent(OrderActivity.this, Login.class);
+                        startActivity(intent);
+                        finish();
+                        return true;
+                    }
+                    Intent intent = new Intent(OrderActivity.this, ProfileActivity.class);
+                    intent.putExtra("userId", userId); // userId có thể là String hoặc int, tùy bạn
+                    startActivity(intent);
+                    return true;
+                } else if(id == R.id.nav_cart){
+                    if(userId == 0){
+                        Intent intent = new Intent(OrderActivity.this, Login.class);
+                        startActivity(intent);
+                        finish();
+                        return true;
+                    }
+                    Intent intent = new Intent(OrderActivity.this, CartActivity.class);
+                    startActivity(intent);
                     return true;
                 }
                 return false;
@@ -295,7 +316,7 @@ public class OrderActivity extends AppCompatActivity {
             int position = data.getIntExtra("position", -1);
 
             if (updated) {
-                getAllOrderItem(2); // load lại dữ liệu
+                getAllOrderItem(userIdInt); // load lại dữ liệu
 
                 new Handler().postDelayed(() -> {
                     if (position != -1) {

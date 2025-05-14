@@ -10,11 +10,12 @@
 
     <ImageView
         android:id="@+id/productImage"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:src="@drawable/iphone1"
+        android:scaleType="fitCenter"
         android:layout_gravity="center_vertical"
-        android:scaleType="centerCrop"/>
+       />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -29,11 +30,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tên sản phẩm"
-            android:textSize="14sp"
+            android:textSize="17sp"
             android:textStyle="bold"/>
 
         <TextView
-            android:layout_marginTop="20dp"
+            android:id="@+id/productColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Màu sắc"
+            android:textSize="14sp"
+            android:textStyle="normal"/>
+
+        <TextView
+            android:layout_marginTop="22dp"
             android:id="@+id/productPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
