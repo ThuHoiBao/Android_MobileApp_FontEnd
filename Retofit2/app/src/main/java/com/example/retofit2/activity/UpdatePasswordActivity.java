@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
@@ -36,6 +37,7 @@ public class UpdatePasswordActivity extends AppCompatActivity {
     private boolean confirmPasswordShowing = false;
     private String password;
     private Context context;
+    private ImageButton backIcon;
 
 
     @Override
@@ -50,7 +52,18 @@ public class UpdatePasswordActivity extends AppCompatActivity {
         ImageView passwordIcon = findViewById(R.id.passwordIcon);
         ImageView  confirmPasswordIcon = findViewById(R.id.confirmPasswordICon);
         updateBtn = findViewById(R.id.updateBtn);
+        backIcon = findViewById(R.id.backIcon);
         final String email = getIntent().getStringExtra("email");
+
+        backIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UpdatePasswordActivity.this, OTPVerification.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
         passwordIcon.setOnClickListener(new View.OnClickListener(){
 
             @Override

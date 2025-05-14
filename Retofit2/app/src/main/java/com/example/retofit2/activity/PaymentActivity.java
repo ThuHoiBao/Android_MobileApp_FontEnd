@@ -41,13 +41,14 @@ public class PaymentActivity extends AppCompatActivity {
     private ProductPaymentAdapter productPaymentAdapter;
 
     private List<CardItemDTO> selectedItems;
+    private List<CardItemDTO> loadOrderItems;
     final long userId = SharedPrefManager.getUserId();
     private TextView fullNameText, phoneNumberText, addressText;
     private TextView totalAmountText, discountAmountText;
     private long totalAmount;
-
     private ImageButton backIcon, nextButton;
     private Button placeOrderButton;
+    private int orderId;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,13 +67,19 @@ public class PaymentActivity extends AppCompatActivity {
         // Lấy danh sách sản phẩm mẫu
         Intent intent1 = getIntent();
         selectedItems = intent1.getParcelableArrayListExtra("selectedItems");
-        Log.e("PaymentActivity", selectedItems.get(0).getCartItemId() + "");
         if (selectedItems != null) {
             productPaymentAdapter = new ProductPaymentAdapter(selectedItems);
             productsRecycleView.setAdapter(productPaymentAdapter);
             updateTotalAmount();
         } else {
             Log.e("PaymentActivity", "No items selected");
+             orderId = intent1.getIntExtra("orderId", -1);
+            if(orderId != -1){
+                callLoadOrderItems(orderId);
+            } else {
+                Toast.makeText(this, "No order ID received", Toast.LENGTH_SHORT).show();
+            }
+
         }
 
         backIcon.setOnClickListener(v -> {
@@ -92,26 +99,55 @@ public class PaymentActivity extends AppCompatActivity {
         getDefaultDeliveryAddress(userId);
 
         placeOrderButton.setOnClickListener(v -> {
-            CreateOrderRequestDTO createOrderRequestDTO = new CreateOrderRequestDTO();
-            createOrderRequestDTO.setUserId(SharedPrefManager.getUserId());
-            List<Integer> list= new ArrayList<>();
-            for (int i = 0; i < selectedItems.size(); i++){
-                list.add(selectedItems.get(i).getCartItemId());
+            if(selectedItems != null){
+                CreateOrderRequestDTO createOrderRequestDTO = new CreateOrderRequestDTO();
+                createOrderRequestDTO.setUserId(SharedPrefManager.getUserId());
+                List<Integer> list= new ArrayList<>();
+                for (int i = 0; i < selectedItems.size(); i++){
+                    list.add(selectedItems.get(i).getCartItemId());
+                }
+                createOrderRequestDTO.setCartItemIds(list);
+                createOrder(createOrderRequestDTO, new OrderCallback() {
+                    @Override
+                    public void onSuccess(OrderResponseDTO orderResponseDTO) {
+                        PaymentRequestDTO paymentRequestDTO = new PaymentRequestDTO(orderResponseDTO.getOrderId(), totalAmount, "NCB", "vn");
+                        createPaymentUrl(paymentRequestDTO);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        Toast.makeText(getApplicationContext(), "Lỗi khi tạo Order: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            } else {
+                if(orderId != -1){
+                    PaymentRequestDTO paymentRequestDTO = new PaymentRequestDTO(orderId, totalAmount, "NCB", "vn");
+                    createPaymentUrl((paymentRequestDTO));
+                }
             }
-            createOrderRequestDTO.setCartItemIds(list);
-            createOrder(createOrderRequestDTO, new OrderCallback() {
-                @Override
-                public void onSuccess(OrderResponseDTO orderResponseDTO) {
-                    PaymentRequestDTO paymentRequestDTO = new PaymentRequestDTO(orderResponseDTO.getOrderId(), totalAmount, "NCB", "vn");
-                    createPaymentUrl(paymentRequestDTO);
-                }
+        });
+    }
 
-                @Override
-                public void onError(Throwable t) {
-                    Toast.makeText(getApplicationContext(), "Lỗi khi tạo Order: " + t.getMessage(), Toast.LENGTH_LONG).show();
+    private void callLoadOrderItems(int orderId) {
+        IOrderAPI orderAPI = APIRetrofit.getOrderApiService();
+        orderAPI.getOrderItems(orderId).enqueue(new Callback<List<CardItemDTO>>() {
+            @Override
+            public void onResponse(Call<List<CardItemDTO>> call, Response<List<CardItemDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    loadOrderItems = response.body();
+                    // Cập nhật giao diện UI sau khi lấy dữ liệu thành công
+                    productPaymentAdapter = new ProductPaymentAdapter(loadOrderItems);
+                    productsRecycleView.setAdapter(productPaymentAdapter);
+                    updateTotalAmount(); // Cập nhật lại tổng tiền
+                } else {
+                    Toast.makeText(PaymentActivity.this, "Error: Unable to load order items", Toast.LENGTH_SHORT).show();
                 }
-            });
+            }
 
+            @Override
+            public void onFailure(Call<List<CardItemDTO>> call, Throwable t) {
+                Toast.makeText(PaymentActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -120,6 +156,7 @@ public class PaymentActivity extends AppCompatActivity {
         orderAPI.createOrderFromCart(requestDTO).enqueue(new Callback<OrderResponseDTO>() {
             @Override
             public void onResponse(Call<OrderResponseDTO> call, Response<OrderResponseDTO> response) {
+
                 if (response.isSuccessful() && response.body() != null) {
                     callback.onSuccess(response.body());
                 } else {
@@ -133,6 +170,8 @@ public class PaymentActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     private void createPaymentUrl(PaymentRequestDTO paymentRequestDTO) {
         VNPayAPI vnPayAPI = APIRetrofit.getVNPAYApiService();
@@ -188,9 +227,17 @@ public class PaymentActivity extends AppCompatActivity {
 
     private void updateTotalAmount() {
         totalAmount = 0;
-        for (CardItemDTO item : selectedItems) {
-            if (!item.isOutOfStockItems()) { // Không cần kiểm tra isSelected() nếu đã lọc trước đó
-                totalAmount += item.getPrice() * item.getQuantity();
+        if(selectedItems != null){
+            for (CardItemDTO item : selectedItems) {
+                if (!item.isOutOfStockItems()) { // Không cần kiểm tra isSelected() nếu đã lọc trước đó
+                    totalAmount += item.getPrice() * item.getQuantity();
+                }
+            }
+        } else {
+            for(CardItemDTO item : loadOrderItems){
+                if(!item.isOutOfStockItems()){
+                    totalAmount += item.getPrice()  * item.getQuantity();
+                }
             }
         }
 

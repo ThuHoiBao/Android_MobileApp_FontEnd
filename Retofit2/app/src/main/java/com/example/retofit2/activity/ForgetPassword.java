@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -26,6 +27,7 @@ import retrofit2.Response;
 
 public class ForgetPassword extends AppCompatActivity {
     private AppCompatButton btnNext;
+    private ImageButton backIcon;
     private EditText emailET;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,17 @@ public class ForgetPassword extends AppCompatActivity {
 
         btnNext = findViewById(R.id.nextBtn);
         emailET = findViewById(R.id.editTextEmail);
+        backIcon = findViewById(R.id.backIcon);
+
+        backIcon.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ForgetPassword.this, Login.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,14 +57,17 @@ public class ForgetPassword extends AppCompatActivity {
                     CustomToast.makeText(ForgetPassword.this, "Email is not empty!", CustomToast.LONG, CustomToast.WARNING, true, Gravity.TOP,350, 100, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+
                         }
                     }).show();
+                    return;
                 } else if(!EmailValidator.isValidEmail(email)){
                     CustomToast.makeText(ForgetPassword.this, "Email is not in correct format!", CustomToast.LONG, CustomToast.WARNING, true, Gravity.TOP,350, 100, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                         }
                     }).show();
+                    return;
                 }
                 UserDTO userDTO = new UserDTO();
                 userDTO.setEmail(email);

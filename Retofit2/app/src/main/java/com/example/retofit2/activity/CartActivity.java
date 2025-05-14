@@ -3,11 +3,13 @@ package com.example.retofit2.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +22,7 @@ import com.example.retofit2.api.ICartAPI;
 import com.example.retofit2.api.retrofit.APIRetrofit;
 import com.example.retofit2.dto.requestDTO.CardItemDTO;
 import com.example.retofit2.utils.SharedPrefManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -55,10 +58,56 @@ public class CartActivity extends AppCompatActivity {
         Long userId = SharedPrefManager.getUserId();
         String token = SharedPrefManager.getToken();
         loadCartData(token, userId);
-        cartAdapter = new CartAdapter(cartItems, recyclerView, totalAmountText);
+        cartAdapter = new CartAdapter(cartItems, recyclerView, totalAmountText, new CartAdapter.OnCartItemClickListener() {
+            @Override
+            public void onItemClick(CardItemDTO item) {
+                String productName = item.getProductName();
+                Intent intent = new Intent(CartActivity.this, ProductDetailActivity.class);
+                intent.putExtra("productName", productName);
+                startActivity(intent);
+                finish();
+            }
+        });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(cartAdapter);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.adminNav);
+        bottomNavigationView.setSelectedItemId(R.id.nav_cart);
+        //   Long userId = getIntent().getLongExtra("userId", -1);
+        bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.nav_home) {
+                    Intent intent = new Intent(CartActivity.this, CustomerHomeActivity.class);
+                    intent.putExtra("userId", userId); // userId có thể là String hoặc int, tùy bạn
+                    startActivity(intent);
+                    return true;
+                }
+                // Tạm thời comment 2 chức năng này
+                else if (id == R.id.nav_orders) {
+                    Intent intent = new Intent(CartActivity.this, OrderActivity.class);
+                    intent.putExtra("userId", userId); // userId có thể là String hoặc int, tùy bạn
+                    startActivity(intent);
+                    return true;
+                }
+                else if (id == R.id.nav_account) {
+                    Intent intent = new Intent(CartActivity.this, ProfileActivity.class);
+                    intent.putExtra("userId", userId); // userId có thể là String hoặc int, tùy bạn
+                    startActivity(intent);
+                    return true;
+                } else if(id == R.id.nav_cart){
+                    Intent intent = new Intent(CartActivity.this, CartActivity.class);
+                    startActivity(intent);
+                    return true;
+                } else if(id == R.id.nav_account){
+                    Intent intent = new Intent(CartActivity.this, ProfileActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+                return false;
+            }
 
+        });
 
         shippingButton.setOnClickListener(v -> {
             // Handle shipping action
@@ -82,11 +131,6 @@ public class CartActivity extends AppCompatActivity {
         });
         cartAdapter.updateTotalAmount();
 
-        backIcon.setOnClickListener(v -> {
-            Intent view = new Intent(CartActivity.this, ProductDetailActivity.class);
-            startActivity(view);
-            finish();
-        });
     }
 
     public void selectAllItems(boolean isSelected) {

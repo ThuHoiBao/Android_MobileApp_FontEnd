@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
+import java.text.DecimalFormat;
 import com.bumptech.glide.Glide;
 import com.example.retofit2.R;
 import com.example.retofit2.dto.requestDTO.ProductRequestDTO;
@@ -16,9 +16,11 @@ import java.util.List;
 
 public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.ProductViewHolder> {
     private List<ProductRequestDTO> productList;
+    private OnProductClickListener productClickListener;
 
-    public HomeProductAdapter(List<ProductRequestDTO> productList) {
+    public HomeProductAdapter(List<ProductRequestDTO> productList, OnProductClickListener productClickListener) {
         this.productList = productList;
+        this.productClickListener = productClickListener;
     }
 
     @NonNull
@@ -32,7 +34,11 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         ProductRequestDTO product = productList.get(position);
         holder.productName.setText(product.getProductName());
-        holder.productPrice.setText(product.getPrice() + "₫");
+
+        DecimalFormat decimalFormat = new DecimalFormat("#,###"); // Define the decimal format
+        String formattedProductPrice = decimalFormat.format(product.getPrice()); // Format the product price
+        holder.productPrice.setText(formattedProductPrice + "₫"); // Set the formatted price to the view
+
         holder.productSold.setText("Đã bán: " + product.getSoldQuantity());
 
         // Kiểm tra xem danh sách imageProducts có ít nhất 1 phần tử hay không
@@ -52,6 +58,12 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
         } else {
             holder.productImage.setImageResource(R.drawable.livechat);  // Nếu không có ảnh, hiển thị ảnh mặc định
         }
+
+        holder.itemView.setOnClickListener(v -> {
+            if(productClickListener != null){
+                productClickListener.onProductClick(product.getProductName());
+            }
+        });
     }
 
     @Override
@@ -74,6 +86,11 @@ public class HomeProductAdapter extends RecyclerView.Adapter<HomeProductAdapter.
     public void setListenerList(List<ProductRequestDTO> iconModelList) {
         this.productList = iconModelList;
         notifyDataSetChanged();  // Thông báo thay đổi dữ liệu
+    }
+
+
+    public interface OnProductClickListener{
+        void onProductClick(String productName);
     }
 }
 

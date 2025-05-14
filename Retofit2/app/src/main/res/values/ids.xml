@@ -3,4 +3,5 @@
     <item name="cartIcon" type="id" />
     <item name="google_btn" type="id" />
     <item name="emailIcon" type="id" />
+    <item name="productDetail" type="id" />
 </resources>
