@@ -69,4 +69,8 @@ dependencies {
 
     implementation ("com.wdullaer:materialdatetimepicker:4.2.3")
 
+    implementation(libs.guava)
+    implementation(libs.generativeai)
+    implementation(libs.firebase.crashlytics.buildtools)
+
 }

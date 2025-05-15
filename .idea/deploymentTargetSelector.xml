@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="Retofit2.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-05-15T02:43:40.458962Z">
+        <DropdownSelection timestamp="2025-05-15T04:08:49.600307100Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Asus\.android\avd\Pixel_8_Pro_API_35.avd" />

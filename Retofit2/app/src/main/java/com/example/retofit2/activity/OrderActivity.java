@@ -103,6 +103,11 @@ public class OrderActivity extends AppCompatActivity {
                     intent.putExtra("userId", userId); // userId có thể là String hoặc int, tùy bạn
                     startActivity(intent);
                     return true;
+                }else if(id == R.id.nav_chat){
+                    Intent intent = new Intent(OrderActivity.this, ChatBoxActivity.class);
+                    startActivity(intent);
+                    finish();
+                    return true;
                 }
                 else if (id == R.id.nav_account) {
                     if(userId == 0){

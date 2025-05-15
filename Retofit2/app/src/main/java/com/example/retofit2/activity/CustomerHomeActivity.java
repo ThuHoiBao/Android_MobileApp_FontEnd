@@ -115,7 +115,13 @@ public class CustomerHomeActivity extends AppCompatActivity implements HomeCatag
                     intent.putExtra("userId", userId); // userId có thể là String hoặc int, tùy bạn
                     startActivity(intent);
                     return true;
-                } else if(id == R.id.nav_cart){
+                } else if(id == R.id.nav_chat){
+                    Intent intent = new Intent(CustomerHomeActivity.this, ChatBoxActivity.class);
+                    startActivity(intent);
+                    finish();
+                    return true;
+                }
+                else if(id == R.id.nav_cart){
                     if(userId == 0){
                         Intent intent = new Intent(CustomerHomeActivity.this, Login.class);
                         startActivity(intent);

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -68,6 +69,16 @@ public class CartActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        backIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CartActivity.this, CustomerHomeActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(cartAdapter);
         BottomNavigationView bottomNavigationView = findViewById(R.id.adminNav);
@@ -95,7 +106,14 @@ public class CartActivity extends AppCompatActivity {
                     intent.putExtra("userId", userId); // userId có thể là String hoặc int, tùy bạn
                     startActivity(intent);
                     return true;
-                } else if(id == R.id.nav_cart){
+                }
+                else if(id == R.id.nav_chat){
+                    Intent intent = new Intent(CartActivity.this, ChatBoxActivity.class);
+                    startActivity(intent);
+                    finish();
+                    return true;
+                }
+                else if(id == R.id.nav_cart){
                     Intent intent = new Intent(CartActivity.this, CartActivity.class);
                     startActivity(intent);
                     return true;

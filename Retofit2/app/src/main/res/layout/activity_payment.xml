@@ -36,7 +36,7 @@
             android:layout_height="48dp"
             android:layout_marginStart="8dp"
             android:padding="8dp"
-            android:text="Payment"
+            android:text="Thanh Toán"
             android:textColor="#000000"
             android:textSize="25sp"
             android:textStyle="bold"

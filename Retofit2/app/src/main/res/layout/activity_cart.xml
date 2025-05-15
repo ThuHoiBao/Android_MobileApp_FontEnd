@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:padding="8dp"
-            android:text="Cart"
+            android:text="Giỏ Hàng"
             android:textColor="#000000"
             android:textSize="25sp"
             android:textStyle="bold"
@@ -104,8 +104,9 @@
             android:id="@+id/totalAmountText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Total Amount: $29.00"
-            android:textSize="20sp"
+            android:text="Total: $29.00"
+            android:textSize="18sp"
+            android:layout_gravity="end"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -113,9 +114,9 @@
         android:id="@+id/shippingButton"
         android:layout_width="match_parent"
         android:layout_height="55dp"
-        android:layout_marginBottom="28dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/round_back_primary_15"
-        android:text="Shipping"
+        android:text="Mua Hàng"
         android:textAllCaps="false"
         android:textColor="#FFFFFF"
         android:textSize="20dp"
