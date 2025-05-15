@@ -19,6 +19,7 @@ import com.example.retofit2.dto.responseDTO.AddressDeliveryDTO;
 import com.example.retofit2.utils.SharedPrefManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,6 +30,7 @@ public class AddAddressDeliveryActivity extends AppCompatActivity {
     private Button btnAddAddress;
     final long userId = SharedPrefManager.getUserId();
     ArrayList<CardItemDTO> selectedItems;
+    private List<CardItemDTO> loadOrderItems;
     ImageButton backIcon;
 
     @Override

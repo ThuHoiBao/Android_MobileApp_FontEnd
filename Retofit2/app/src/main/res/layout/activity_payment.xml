@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,16 +9,17 @@
     >
 
     <!-- First LinearLayout -->
+
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="-2dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="10dp"
-        android:paddingTop="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:paddingTop="10dp">
 
         <ImageButton
             android:id="@+id/backIcon"
@@ -41,21 +42,23 @@
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/backIcon" />
     </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:background="#242323" />
+        android:background="#242323"
+        android:layout_below="@id/linearLayout"/>
     <LinearLayout
+        android:layout_below="@id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="10dp"
         android:paddingTop="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+       >
 
         <ImageButton
             android:id="@+id/map"
@@ -79,12 +82,19 @@
     </LinearLayout>
 
 
+    <!-- Danh sách sản phẩm thanh toán -->
+
+    <!-- Tổng cộng và tiết kiệm -->
+    <!-- Nút Đặt hàng -->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_below="@id/linearLayout"
+        android:layout_marginTop="56dp"
+        android:layout_marginBottom="16dp"
         android:background="@android:color/white"
-        android:layout_marginBottom="16dp">
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="317dp"
@@ -136,26 +146,28 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="end"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
             android:background="@android:color/transparent"
             android:scaleType="centerInside"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="5dp"
             android:src="@drawable/next" />
     </LinearLayout>
 
-    <!-- Danh sách sản phẩm thanh toán -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/productRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="540dp"
+        android:layout_width="382dp"
+        android:layout_height="387dp"
+        android:layout_below="@id/linearLayout"
+        android:layout_marginTop="137dp"
         android:layout_marginBottom="16dp"
         android:orientation="vertical" />
 
-    <!-- Tổng cộng và tiết kiệm -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="81dp"
         android:gravity="end"
         android:orientation="horizontal">
 
@@ -172,19 +184,18 @@
                 android:text="₫31.500"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                />
+                android:textStyle="bold" />
         </LinearLayout>
-
     </LinearLayout>
-    <!-- Nút Đặt hàng -->
+
     <Button
         android:id="@+id/placeOrderButton"
         android:layout_width="match_parent"
         android:layout_height="63dp"
+        android:layout_alignParentBottom="true"
         android:layout_marginTop="16dp"
         android:backgroundTint="#FF5722"
         android:text="Đặt hàng"
         android:textColor="@android:color/white"
         android:textStyle="bold" />
-</LinearLayout>
+</RelativeLayout >

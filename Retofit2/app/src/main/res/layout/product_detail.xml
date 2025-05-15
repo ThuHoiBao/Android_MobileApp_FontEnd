@@ -1,183 +1,182 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <!-- FrameLayout để hiển thị ViewPager2 và overlay các nút Previous và Next -->
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="350dp">
-
-        <!-- ViewPager2 để hiển thị ảnh chính -->
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/mainImageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:scaleType="centerInside" />
-
-        <!-- Nút Previous -->
-        <ImageButton
-            android:id="@+id/prevButton"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_gravity="start|center_vertical"
-            android:background="@android:color/transparent"
-            android:src="@drawable/previous"
-            android:scaleType="centerInside" />
-
-        <!-- Nút Next -->
-        <ImageButton
-            android:id="@+id/nextButton"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_gravity="end|center_vertical"
-            android:background="@android:color/transparent"
-            android:src="@drawable/next"
-            android:scaleType="centerInside" />
-    </FrameLayout>
-
-    <!-- RecyclerView để hiển thị các thumbnail -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/itemRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal"
-        android:layout_below="@id/frameLayout"
-        />
-
-    <!-- LinearLayout để hiển thị tên sản phẩm, giá bán và số lượng đã bán -->
-    <LinearLayout
-        android:id="@id/productDetail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@id/itemRecyclerView"
-        android:layout_marginTop="8dp">
-
-        <!-- Tên sản phẩm nằm ở trên, chiếm 1 hàng -->
-        <TextView
-            android:id="@+id/productNameTextView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--  VÙNG CUỘN  -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/adminNav"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <!--  NỘI DUNG BÊN TRONG CUỘN  -->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="iPhone 16 Pro Max 256GB"
-            android:textSize="20sp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
-            android:paddingEnd="8dp" />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-
-        android:layout_marginTop="8dp">
-
-        <!-- Giá bán nằm bên trái -->
-        <TextView
-            android:id="@+id/priceTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="₫30.790.000"
-            android:textSize="35sp"
-            android:textColor="@color/red"
-            android:layout_weight="1" />
-
-        <!-- Số lượng đã bán nằm bên phải -->
-        <TextView
-            android:id="@+id/soldQuantityTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Đã bán: 24"
-            android:textSize="25sp"
-            android:textColor="@color/black"/>
-        </LinearLayout>
-
-    </LinearLayout>
-
-
-    <View
-        android:id="@+id/view_offset_helper"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="#CCCCCC"
-        android:layout_below="@id/productDetail"
-        />
-
-    <LinearLayout
-        android:id="@+id/layoutCart"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingEnd="8dp"
-        android:layout_marginTop="20dp"
-        android:weightSum="1"
-        android:layout_below="@id/view_offset_helper"
-        >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Đánh giá sản phẩm"
-            android:textSize="20sp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
-            />
-
-        <!-- Icon cart + textCart  -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_weight="0.3"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="end|center_horizontal"
-            >
-            <ImageView
-                android:id="@id/cartIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/cart"
-            android:layout_gravity="center_horizontal" />
-
-            <TextView
-                android:layout_width="wrap_content"
+            android:padding="16dp">
+            <!--  FrameLayout chứa ViewPager2 và nút  -->
+            <FrameLayout
+                android:id="@+id/frameLayout"
+                android:layout_width="0dp"
+                android:layout_height="350dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/mainImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerInside"/>
+                <ImageButton
+                    android:id="@+id/prevButton"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_gravity="start|center_vertical"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/previous"
+                    android:scaleType="centerInside"/>
+                <ImageButton
+                    android:id="@+id/nextButton"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_gravity="end|center_vertical"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/next"
+                    android:scaleType="centerInside"
+                    />
+            </FrameLayout>
+            <!--  RecyclerView thumbnails  -->
+            <!--  Thông tin sản phẩm  -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/itemRecyclerView"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Thêm vào giỏ hàng"
-                android:textSize="12sp"
-                android:textColor="@android:color/black"
-                android:layout_gravity="center_horizontal"
-                android:paddingTop="4dp"
-                android:textStyle="bold"
-                />
-        </LinearLayout>
-    </LinearLayout>
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/frameLayout" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/reviewRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:orientation="vertical"
-        android:layout_below="@+id/layoutCart"
-        android:layout_above="@id/adminNav"
-        />
-
+            <LinearLayout
+                android:id="@+id/productDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/itemRecyclerView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="8dp">
+                <TextView
+                    android:id="@+id/productNameTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="iPhone 16 Pro Max 256GB"
+                    android:textSize="20sp"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="8dp">
+                    <TextView
+                        android:id="@+id/priceTextView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="₫30.790.000"
+                        android:textSize="35sp"
+                        android:textColor="@color/red"
+                        android:layout_weight="1"/>
+                    <TextView
+                        android:id="@+id/soldQuantityTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Đã bán: 24"
+                        android:textSize="25sp"
+                        android:textColor="@color/black"
+                        />
+                </LinearLayout>
+            </LinearLayout>
+            <View
+                android:id="@+id/view_offset_helper"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="#CCCCCC"
+                app:layout_constraintTop_toBottomOf="@id/productDetail"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+            <!--  Đánh giá + Giỏ hàng  -->
+            <LinearLayout
+                android:id="@+id/layoutCart"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="20dp"
+                android:weightSum="1"
+                app:layout_constraintTop_toBottomOf="@id/view_offset_helper"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="0.7"
+                    android:layout_height="wrap_content"
+                    android:text="Đánh giá sản phẩm"
+                    android:textSize="20sp"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="0.3"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="end|center_horizontal">
+                    <ImageView
+                        android:id="@+id/cartIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/cart"
+                        android:layout_gravity="center_horizontal"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Thêm vào giỏ hàng"
+                        android:textSize="12sp"
+                        android:textColor="@android:color/black"
+                        android:paddingTop="4dp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+            </LinearLayout>
+            <!--  RecyclerView hiển thị đánh giá  -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/reviewRecyclerView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/layoutCart"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+    <!--  Bottom NavigationView cố định  -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/adminNav"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:background="@color/white"
         app:itemIconTint="@color/bottom_nav_color"
         app:itemTextColor="@color/bottom_nav_color"
         app:labelVisibilityMode="labeled"
-        app:menu="@menu/admin_nav_menu" />
-</RelativeLayout>
+        app:menu="@menu/admin_nav_menu"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

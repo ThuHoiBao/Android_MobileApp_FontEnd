@@ -51,6 +51,7 @@ public class UploadImageActivity extends AppCompatActivity {
     // Mở thư viện ảnh
     private void openImageChooser() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
     @Override

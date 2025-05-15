@@ -58,9 +58,7 @@ public class AddressDeliveryActivity extends AppCompatActivity {
             intent.putParcelableArrayListExtra("selectedItems", selectedItems);
             startActivity(intent);
             finish();
-
         });
-
 
         backIcon.setOnClickListener(v -> {
             Intent intent = new Intent(AddressDeliveryActivity.this, PaymentActivity.class);

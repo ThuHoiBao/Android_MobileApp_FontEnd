@@ -90,10 +90,19 @@ public class PaymentActivity extends AppCompatActivity {
 
         //Lay thong tin thanh toans
         nextButton.setOnClickListener(v -> {
-            Intent intent = new Intent(PaymentActivity.this, AddressDeliveryActivity.class);
-            intent.putParcelableArrayListExtra("selectedItems", new ArrayList<>(selectedItems));
-            startActivity(intent);
-            finish();
+            if (selectedItems == null || selectedItems.isEmpty()) {
+                // If selectedItems is null or empty, pass loadOrderItems
+                Intent intent = new Intent(PaymentActivity.this, AddressDeliveryActivity.class);
+                intent.putParcelableArrayListExtra("selectedItems", new ArrayList<>(loadOrderItems));
+                startActivity(intent);
+                finish();
+            } else {
+                // If selectedItems is not null or empty, pass selectedItems
+                Intent intent = new Intent(PaymentActivity.this, AddressDeliveryActivity.class);
+                intent.putParcelableArrayListExtra("selectedItems", new ArrayList<>(selectedItems));
+                startActivity(intent);
+                finish();
+            }
         });
 
         getDefaultDeliveryAddress(userId);
